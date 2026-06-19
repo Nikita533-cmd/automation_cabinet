@@ -20,5 +20,6 @@ from elements import urls
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', include(urls))
+    path('', include(urls)),
+    path('api/', include('api.urls')),
 ]
