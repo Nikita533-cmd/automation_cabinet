@@ -2,7 +2,7 @@
 from django.urls import include, path
 from rest_framework.routers import DefaultRouter
 
-from api.views import AutomatViewSet
+from api.views import AutomatViewSet, generate
 
 router = DefaultRouter()
 router.register('test', AutomatViewSet)
@@ -10,5 +10,5 @@ router.register('test', AutomatViewSet)
 
 urlpatterns = [
     path('auth/', include('djoser.urls.authtoken')),
-    path('', include(router.urls)),
+    path('test/', generate),
 ]

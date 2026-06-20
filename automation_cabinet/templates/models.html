@@ -1,0 +1,173 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Модель</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+ rel="stylesheet">
+    <!-- <link href="{% static '/bootstrap/assets/dist/css/bootstrap.min.css' %}" rel="stylesheet">         -->
+    <script type="importmap">
+    {
+        "imports": {
+        "three": "https://cdn.jsdelivr.net/npm/three@latest/build/three.module.js",
+        "three/addons/": "https://cdn.jsdelivr.net/npm/three@latest/examples/jsm/"
+        }
+    }
+    </script> 
+    <script type="module" src="{% static 'js/main.js' %}"></script>      
+    {% comment %} <script type="module" src="./main.js"></script> {% endcomment %}
+</head>
+<body>
+    <div class="container my-4">
+        <h1>
+            <p>Конфигуратор шкафов</p>                    
+        </h1>
+    </div>    
+    <div class="form">
+        <form id="input_form" method="post">
+            <h2>Запрашиваемые параметры</h2>
+            <div class="initial_data">
+                <table class="parameters">
+                    <colgroup>
+                        <col style="width: 45%;">
+                        <col style="width: 25%;">
+                        <col style="width: 15%;">
+                        <col style="width: 15%;">
+                    </colgroup>
+                    <tr id="row1">
+                        <td style="text-align: left; padding-left: 0px;">
+                            <label class="form-label">
+                                Пропускная мощность щита
+                            </label>
+                        </td>
+                        <td style="text-align: right;">
+                            <input type="number" class="form-control" id="power" name="power" required min="1" max="95" oninput="if(parseFloat(this.value) > 95) this.value = 95;">
+                        </td>
+                        <td style="text-align: left;">А</td>
+                        <td id="recalculation" style="text-align: left;">-</td>
+                    </tr>
+                    <tr id="row2">
+                        <td style="text-align: left; padding-left: 0px;">
+                            <label class="form-label">
+                                Количество вводов
+                            </label>
+                        </td>
+                        <td style="text-align: right;">
+                            <select class="form-control" id="count" name="count" required>
+                                <option>1</option>
+                                <option>2</option>
+                            </select>
+                        </td>
+                        <td style="text-align: left;">шт.</td>                        
+                    </tr>
+                    <tr id="row3">
+                        <td style="text-align: left; padding-left: 0px;">
+                            <label class="form-label">
+                                Автоматический ввод резерва
+                            </label>
+                        </td>
+                        <td style="text-align: right;">
+                            <input type="checkbox" name="checkbox_AVR" id="checkbox_AVR" required>                            
+                        </td>
+                        <td style="text-align: left;"></td>                        
+                    </tr>
+                    <tr id="row4">
+                        <td style="text-align: left; padding-left: 0px;">
+                            <label class="form-label">
+                                Введите кол-во отводящих линий
+                            </label>
+                        </td>
+                        <td style="text-align: right;">
+                            <input type="number" class="form-control" id="outlet" name="outlet" required min="1" max="10" step="1" 
+                            oninput="this.value = Math.max(1, Math.min(10, parseFloat(this.value)));">                            
+         
+09:42
+              </td>
+                        <td style="text-align: left;"></td>                        
+                    </tr>
+                </table>
+
+                <div id="count_outlet"></div>
+
+            </div>
+            
+            
+        </form>
+         <div class="window">
+            <h1>
+                Окно для просмотра модели
+            </h1>
+            <div id="okno">
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6 d-grid">
+      <button type="submit" form = "input_form" class="btn btn-primary" id="calculation"> Подобрать</button>
+    </div>
+    
+    
+</body>
+</html>
+<style>
+    
+    body {
+        font-family: Arial, Helvetica, sans-serif;
+        font-size: 14px;
+        max-width: 1704px;            
+    }
+    .form{
+        background: #F3F2F8;
+        display: flex;
+        flex-direction: row;
+        /* align-items: stretch;  */
+        max-width: 1704px;
+        /* margin: 0 auto; */
+        border-radius: 30px;
+        gap: 20px; /* промежуток между колонками */
+        padding: 20px;
+        /* box-sizing: border-box; */
+        min-height: 600px;
+    }
+    h1, h2, h3 {
+        font-weight: 700;
+        color: #0F1379;
+        max-width: 1704px;
+        padding: 0;
+    }
+    #input_form, .window {
+        background: #FFFFFF;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        max-width: 1704px;
+        border-radius: 30px;
+        width: 50%; /* Занимает половину ширины container-gray */
+        box-sizing: border-box; /* Включаем padding и border в ширину */
+    }
+    .initial_data{
+        width: 100%;
+    }
+    .parameters{
+        width: 100%;
+    }
+    .window, .input_form{
+        padding: 20px;
+        /* border-radius: 20px; */
+    }
+    #okno{
+        width: 100%; 
+        min-height: 100%;
+    }
+    .form-control{
+        width: 100%;
+        font-weight: 700;
+        text-align: right;
+        /* margin-right: 20px; */
+    }
+    #row1, #row2, #row3, #row4 {
+        height: 30px;
+
+    }
+</style>

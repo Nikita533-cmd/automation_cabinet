@@ -3,7 +3,7 @@ from django.http import JsonResponse
 from .models import Automat, Contactor
 
 def baseaup(request):
-    return render(request, 'base.html')
+    return render(request, 'models.html')
 
 def test(request):
     context = []
