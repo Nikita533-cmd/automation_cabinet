@@ -17,7 +17,7 @@ from rest_framework.response import Response
 
 from api.serializers import AutomatSerializer, RequestSerializer, ResponseSerializer
 
-from elements.models import Automat, Cabinet
+from elements.models import Automat, Cabinet, ABR
 
 
 class AutomatViewSet(viewsets.ModelViewSet):
@@ -46,9 +46,11 @@ class VRY():
         self.B_min = 0
         self.Y2 = 0
         self.scaf = None
-        self.i = get_i(power)
+        # self.i = get_i(power)
+        self.i = power
         self.generate_input()
         self.generate_output()
+        self.getABR()
         
         
         print(self.elements)
@@ -68,14 +70,19 @@ class VRY():
     def get_i(power):
         return power/220*1000
         
-
+    def getABR(self):
+        if self.checkbox_AVR:
+            avr = ABR.objects.filter(i__gte=self.i).order_by('i').first()
+            self.elements.append({'path': avr.Path, 'X': self.otst, 'Y': avr.B*1.5, 'Z': 0})
+            return True
+        return False
     
     def generate_input(self):
-        a = Automat.objects.filter(i__gte=self.i).first()
+        a = Automat.objects.filter(i__gte=self.i).order_by('i').first()
         
         if self.count == 2:
             self.B_min = a.B*2*1.3
-            self.scaf = Cabinet.objects.filter(B__gte=self.B_min).first()
+            self.scaf = Cabinet.objects.filter(B__gte=self.B_min).order_by('i').first()
             # self.elements.append({'path': self.scaf.Path, 'X': 0, 'Y': 0, 'Z': 0})
             self.elements_obj.append(self.scaf)
             Y = self.scaf.A - a.A
@@ -86,7 +93,7 @@ class VRY():
             self.Y2 = Y - a.A*2
             return True
         self.B_min = a.B*1.3
-        self.scaf = Cabinet.objects.filter(B__gte=self.B_min).first()
+        self.scaf = Cabinet.objects.filter(B__gte=self.B_min).order_by('i').first()
         
         # self.elements.append({'path': self.scaf.Path, 'X': 0, 'Y': 0, 'Z': 0})
         Y = self.scaf.A - a.A
@@ -101,7 +108,7 @@ class VRY():
         X=0
         bi =0 
         for e in self.outs:
-            a = Automat.objects.filter(i__gte=e['i']).first()
+            a = Automat.objects.filter(i__gte=e['i']).order_by('i').first()
             bi = a.B/2
             if i==0:
                 X = a.B/2 + self.otst

@@ -31,7 +31,7 @@ class Automat(models.Model):
     Path = models.TextField('Путь к файлу')
     fiksator = models.ForeignKey(Fiksator, on_delete = models.CASCADE)
     class Meta:
-        ordering = ('name',)
+        ordering = ('i',)
         verbose_name = 'Модель автомата'
         verbose_name_plural = 'Модели автоматов'
 
@@ -51,7 +51,7 @@ class Contactor(models.Model):
     Path = models.TextField('Путь к файлу')
     fiksator = models.ForeignKey(Fiksator, on_delete = models.CASCADE)
     class Meta:
-        ordering = ('name',)
+        ordering = ('i',)
         verbose_name = 'Модель контактора'
         verbose_name_plural = 'Модели контакторов'
 
@@ -67,11 +67,30 @@ class Cabinet(models.Model):
     B = models.FloatField('Ширина')
     C = models.FloatField('Глубина')
     Path = models.TextField('Путь к файлу')
-
+    i = models.FloatField('Сила тока')
     class Meta:
-        ordering = ('name',)
+        ordering = ('i',)
         verbose_name = 'Модель шкафа'
         verbose_name_plural = 'Модели шкафов'
 
     def __str__(self):
         return self.name
+
+class ABR(models.Model):
+    """Модель АВР."""
+    mass = models.FloatField('Масса, кг')
+    price = models.FloatField('Цена, руб')
+    name = models.CharField('Название', max_length=150)
+    A = models.FloatField('Высота')
+    B = models.FloatField('Ширина')
+    C = models.FloatField('Глубина')
+    Path = models.TextField('Путь к файлу')
+    fiksator = models.ForeignKey(Fiksator, on_delete = models.CASCADE)
+    i = models.FloatField('Сила тока')
+    class Meta:
+        ordering = ('name',)
+        verbose_name = 'Модель АВР'
+        verbose_name_plural = 'Модели АВРов'
+
+    def __str__(self):
+        return self.name  
