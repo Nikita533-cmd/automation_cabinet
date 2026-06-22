@@ -120,11 +120,19 @@ calculation_Button.addEventListener('click', async function(e) {
     // Добавляем состояние чекбокса вручную (FormData не включает неотмеченные чекбоксы)
     dataObject.checkbox_AVR = checkboxAVR.checked ? 'on' : 'off';
     formData.set('checkbox_AVR', checkboxAVR.checked);
-    var dq = {}
+    const dq = { outs: [] };
     console.log('--- FormData ---');
     for (const [key, value] of formData.entries()) {
         console.log(`${key}: ${value}`);
-        dq[key]=value;
+        if (key.includes("power_outlet"))
+        {
+             dq.outs.push({name: key, i: value});
+        }
+        else
+        {
+            dq[key]=value;
+        }
+        
     }
     console.log('--- Конец FormData ---', dq);
 

@@ -8,7 +8,7 @@ from django.db import transaction
 from rest_framework import serializers
 
 from elements.models import (
-    Automat, Contactor
+    Automat, Contactor, Cabinet
 )
 
 
@@ -19,6 +19,16 @@ class AutomatSerializer(serializers.ModelSerializer):
         model = Automat
         fields = ('mass', 'price', 'name', 'i', 'Phase', 'A', 'B', 'C', 'Path', 'fiksator')
 
+
+class CabinetSerializer(serializers.ModelSerializer):
+    """Сериализатор для связующей модели игредиент-рецепт с полем 'amount'."""
+
+    class Meta:
+        model = Cabinet
+        fields = ('mass', 'price', 'name', 'A', 'B', 'C', 'Path')
+
+
+
 class Response2Serializer(serializers.Serializer):
     """Сериализатор для связующей модели игредиент-рецепт с полем 'amount'."""
     X = serializers.FloatField()
@@ -28,8 +38,15 @@ class Response2Serializer(serializers.Serializer):
     
 class ResponseSerializer(serializers.Serializer):
     """Сериализатор для связующей модели игредиент-рецепт с полем 'amount'."""
-    count = serializers.IntegerField()
+    mass = serializers.FloatField()
+    price = serializers.FloatField()
     elements = Response2Serializer(many=True)
+    cabinet = CabinetSerializer(read_only=True)
+
+class OutsSerializer(serializers.Serializer):
+    """Сериализатор для связующей модели игредиент-рецепт с полем 'amount'."""
+    name = serializers.CharField()
+    i = serializers.FloatField()
 
 
 class RequestSerializer(serializers.Serializer):
@@ -38,6 +55,9 @@ class RequestSerializer(serializers.Serializer):
     count = serializers.IntegerField()
     checkbox_AVR = serializers.BooleanField()
     outlet = serializers.IntegerField()
+    outs = OutsSerializer(many=True)
+
+
     def validate(self, attrs):
         return super().validate(attrs)
     # def to_representation(self, instance):
