@@ -116,8 +116,10 @@ const calculation_form = document.getElementById('input_form');
 calculation_form.addEventListener('submit', async function(e) {
         e.preventDefault(); 
 
+
     const inputForm = document.getElementById('input_form'); 
     const checkboxAVR = document.getElementById('checkbox_AVR'); 
+    clearScene();
 
 // 1. Проверяем валидность формы средствами HTML5
     const isValid = this.checkValidity(); 
@@ -153,9 +155,9 @@ calculation_form.addEventListener('submit', async function(e) {
     dataObject.checkbox_AVR = checkboxAVR.checked ? 'on' : 'off';
     formData.set('checkbox_AVR', checkboxAVR.checked);
     const dq = { outs: [] };
-    console.log('--- FormData ---');
+    // console.log('--- FormData ---');
     for (const [key, value] of formData.entries()) {
-        console.log(`${key}: ${value}`);
+        // console.log(`${key}: ${value}`);
         if (key.includes("power_outlet"))
         {
             dq.outs.push({name: key, i: value});
@@ -166,9 +168,9 @@ calculation_form.addEventListener('submit', async function(e) {
         }
         
     }
-    console.log('--- Конец FormData ---', dq);
+    // console.log('--- Конец FormData ---', dq);
 
-    console.log(formData);
+    // console.log(formData);
     const token = localStorage.getItem('access_token');
     const response = await fetch('api/test/', {
             method: 'POST',
@@ -187,52 +189,71 @@ calculation_form.addEventListener('submit', async function(e) {
         
         const result = await response.json();
         console.log('Успех:', result);
-        for (const name in result) {
+
+        
+        const general_price = document.getElementById('price');
+        general_price.textContent = 'Стоимость: '+ Math.round(result.price) + ' руб.';
+        
+
+        const general_mass = document.getElementById('massa'); 
+        general_mass.textContent = 'Масса: ' + Math.round(result.mass) + ' кг';
+        
+
+        for (const name in result) {       
+
             if (name === 'cabinet') {
-                for (const [key, value] of Object.entries(result[name])) {
-                if (key === 'Path') {
-                    // Теперь код честно остановится и дождется загрузки шкафа
-                    await loadModel(value);
-                }
-            }
+                const cabinet = result[name];
+                
+                const A = cabinet.A ?? null;
+                const B = cabinet.B ?? null;
+                const C = cabinet.C ?? null;
+                const Path = cabinet.Path ?? null;
+                const mass = cabinet.mass ?? null;
+                const cabinetName = cabinet.name ?? null; 
+                const price = cabinet.price ?? null;
+               
+                // console.log('Координата A:', A);
+                // console.log('Координата B:', B);
+                // console.log('Координата C:', C);
+                // console.log('Путь к модели:', Path);
+                // console.log('Масса:', mass);
+                // console.log('Название:', cabinetName);
+                // console.log('Цена:', price);
+
+                await loadModel(A,B,C,Path);
+
+                // for (const [key, value] of Object.entries(result[name])) {
+
+                // if (key === 'Path') {
+                //     // Теперь код честно остановится и дождется загрузки шкафа
+                //     await loadModel(value);
+                // }
+            // }
 
             }            
-            console.log('name:', name);
+            // console.log('name:', name);
         }
 
         for (const name in result) {
             if (name === 'elements') {
             
                 for (const [key, value] of Object.entries(result[name])) {
-                    console.log('key204:', key);
-                    console.log('value204:', value);
+                    // console.log('key204:', key);
+                    // console.log('value204:', value);
                     const { X, Y, Z, path } = value;
                     // Теперь у вас есть готовые переменные, с которыми можно работать:
-                    console.log('Координата X:', X);       // Выведет: 50.5
-                    console.log('Координата Y:', Y);       // Выведет: 316.5
-                    console.log('Координата Z:', Z);       // Выведет: 0
-                    console.log('Путь к модели:', path);   // Выведет: "automat/Автоматический..." 
+                    // console.log('Координата X:', X);       // Выведет: 50.5
+                    // console.log('Координата Y:', Y);       // Выведет: 316.5
+                    // console.log('Координата Z:', Z);       // Выведет: 0
+                    // console.log('Путь к модели:', path);   // Выведет: "automat/Автоматический..." 
 
                     await add_model(X,Y,Z,path)
-
                 }
-
-            }
-            
-            console.log('name:', name);
-
+            }            
+            // console.log('name:', name);
         }
 //      console.log(`  checkbox_AVR: ${dataObject.checkbox_AVR}`);  
 });
-
-
-
-
-
-// document.getElementById("asd");
-
-
-
 
 
 // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! Работа с three js !!!!!!!!!!!!!!!!!!!!!!!
@@ -251,7 +272,7 @@ main();
 
 function main() {
     init();
-    animate();
+    // animate();
     // addButton();
 }
 
@@ -292,7 +313,7 @@ function initCamera() {
     CAMERA = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 100);
     CAMERA.position.x = 0;
     CAMERA.position.y = 0;
-    CAMERA.position.z = 2;
+    CAMERA.position.z = 1;
 }
 
 function initRenderer() {
@@ -311,20 +332,20 @@ function initLoaders() {
     
 }
 
-function loadModel(path) {
+function loadModel(A,B,C,path) {
 
     GLB_LOADER = new GLTFLoader();
     GLB_LOADER.load(
         `static/models/${path}`,
         function(gltf) {
             const model = gltf.scene;
-            model.position.set(0, 0, 0);
+            model.position.set(-B/2, -A/2, -C/2);
             model.scale.set(1, 1, 1);
             SCENE.add(model);
             console.log('Модель загружена!');
             MAIN_MODEL = model;
             // Добавляем оси к модели
-            addAxesToModel(model, 0.5); // Длина осей — 5 единиц
+            // addAxesToModel(model, 0.5); // Длина осей — 5 единиц
             // Ищем дверцу и делаем её прозрачной
             model.traverse(child => {
 
@@ -360,7 +381,7 @@ function initControls() {
     CONTROLS.minPolarAngle = Math.PI * 1 / 4;
     CONTROLS.maxPolarAngle = Math.PI * 3 / 4;
     CONTROLS.minDistance = 1;
-    CONTROLS.maxDistance = 30;
+    CONTROLS.maxDistance = 20;
     // CONTROLS.autoRotate = true;
     CONTROLS.autoRotate = false;
     CONTROLS.autoRotateSpeed = -1.0;
@@ -384,28 +405,6 @@ function render() {
 }
 
 
- ///////////////////////////////// Тестовое удаление модели ///////////////////////////////////////////
-// document.getElementById('clear').addEventListener('click', function() {
-//     if (MAIN_MODEL) {
-//         SCENE.remove(MAIN_MODEL);
-//         MAIN_MODEL.traverse(child => {
-//             if (child.isMesh) {
-//                 child.geometry.dispose();
-//                 if (Array.isArray(child.material)) {
-//                     child.material.forEach(mat => mat.dispose());
-//                 } else {
-//                     child.material.dispose();
-//                 } // ← добавлена закрывающая скобка для if (child.isMesh)
-//             } // ← добавлена закрывающая скобка для traverse
-//         });
-//         MAIN_MODEL = null;
-//         console.log('Модель удалена');
-//     } else {
-//         console.log('Нет модели для удаления');
-//     }
-// });
-
-
 // Добавить модель
 // function addButton() {
 //   const button = document.getElementById('button_add');
@@ -413,14 +412,7 @@ function render() {
 // }
 
 // Функция добавления модели относительно основной
-function add_model(X, Y, Z, path) {
-    // if (!MAIN_MODEL) {
-    //     console.error('MAIN_MODEL ещё не загружен');
-    //     return;
-    // }
-
-//   const position_y = parseFloat(document.getElementById('position_y').value);
-//   const position_z = parseFloat(document.getElementById('position_z').value);   
+function add_model(X, Y, Z, path) {     
 
     const loader = new GLTFLoader();
     loader.load(
@@ -439,9 +431,49 @@ function add_model(X, Y, Z, path) {
         // newModel.scale.copy(MAIN_MODEL.scale);
         
         SCENE.add(newModel);
-        
+        ADD_MODELS.push(newModel);
+        console.log('ADD_MODELS',ADD_MODELS);
     },
     function(xhr) { console.log('Загрузка новой модели: ' + (xhr.loaded / xhr.total * 100) + '%'); },
     function(error) { console.error('Ошибка загрузки новой модели:', error); }
   );
+}
+
+/////////////////////////////// Тестовое удаление модели ///////////////////////////////////////////
+function clearScene() {
+    // Удаляем и очищаем MAIN_MODEL
+    if (MAIN_MODEL) {
+        SCENE.remove(MAIN_MODEL);
+        MAIN_MODEL.traverse(child => {
+            if (child.isMesh) {
+                child.geometry.dispose();
+                if (Array.isArray(child.material)) {
+                    child.material.forEach(mat => mat.dispose());
+                } else {
+                    child.material.dispose();
+                }
+            }
+        });
+        MAIN_MODEL = null;
+    }
+
+    // Удаляем и очищаем все дополнительные модели
+    ADD_MODELS.forEach(model => {
+        if (model) {
+            SCENE.remove(model);
+            model.traverse(child => {
+                if (child.isMesh) {
+                    child.geometry.dispose();
+            if (Array.isArray(child.material)) {
+                child.material.forEach(mat => mat.dispose());
+            } else {
+                child.material.dispose();
+            }
+        }
+    });
+        }
+    });
+    ADD_MODELS = []; // Очищаем массив
+
+    console.log('Сцена очищена');
 }
