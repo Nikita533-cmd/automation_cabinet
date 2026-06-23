@@ -5,8 +5,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Модель</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
- rel="stylesheet">
+    
+    <!-- <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"> -->
+    <link href="{% static '/bootstrap/assets/dist/css/bootstrap.min.css' %}" rel="stylesheet">
+    
     <!-- <link href="{% static '/bootstrap/assets/dist/css/bootstrap.min.css' %}" rel="stylesheet">         -->
     <script type="importmap">
     {
@@ -16,25 +18,29 @@
         }
     }
     </script> 
-    <script type="module" src="{% static 'js/main.js' %}"></script>      
+    
+    <script type="module" src="{% static 'js/main.js' %}"></script> 
     {% comment %} <script type="module" src="./main.js"></script> {% endcomment %}
+    <link href="{% static 'css/styles.css' %}?_v08" rel="stylesheet">
 </head>
 <body>
     <div class="container my-4">
         <h1>
-            <p>Конфигуратор шкафов</p>                    
+            Конфигуратор шкафов                    
         </h1>
     </div>    
     <div class="form">
-        <form id="input_form" method="post">
+        <form id="input_form" method="post" novalidate>
+            {% csrf_token %}
             <h2>Запрашиваемые параметры</h2>
             <div class="initial_data">
-                <table class="parameters">
+                <table class="parameters table">
                     <colgroup>
-                        <col style="width: 45%;">
-                        <col style="width: 25%;">
-                        <col style="width: 15%;">
-                        <col style="width: 15%;">
+                        <col style="width: 40%;">
+                        <col style="width: 20%;">
+                        <col style="width: 10%;">
+                        <col style="width: 20%;">
+                        <col style="width: 10%;">
                     </colgroup>
                     <tr id="row1">
                         <td style="text-align: left; padding-left: 0px;">
@@ -43,10 +49,15 @@
                             </label>
                         </td>
                         <td style="text-align: right;">
-                            <input type="number" class="form-control" id="power" name="power" required min="1" max="95" oninput="if(parseFloat(this.value) > 95) this.value = 95;">
+                            <input type="number" class="form-control" id="power" name="power" required min="1" max="95" step="0.01"
+                            oninput="if(parseFloat(this.value) > 95) this.value = 95;">
                         </td>
-                        <td style="text-align: left;">А</td>
-                        <td id="recalculation" style="text-align: left;">-</td>
+                        <td style="text-align: left;">Ампер</td>
+                        <td style="text-align: right;">
+                            <input type="number" class="form-control" id="power_kvt" name="power_kvt" min="0.22" max="20.9" step="0.01" 
+                            oninput="if(parseFloat(this.value) > 20.9) this.value = 20.9;">
+                        </td>
+                        <td id="recalculation" style="text-align: left;">кВт</td>
                     </tr>
                     <tr id="row2">
                         <td style="text-align: left; padding-left: 0px;">
@@ -69,23 +80,23 @@
                             </label>
                         </td>
                         <td style="text-align: right;">
-                            <input type="checkbox" name="checkbox_AVR" id="checkbox_AVR" required>                            
+                            <input type="checkbox" name="checkbox_AVR" id="checkbox_AVR">                            
                         </td>
                         <td style="text-align: left;"></td>                        
                     </tr>
                     <tr id="row4">
                         <td style="text-align: left; padding-left: 0px;">
                             <label class="form-label">
-                                Введите кол-во отводящих линий
+                                Количество отводящих линий
                             </label>
                         </td>
                         <td style="text-align: right;">
                             <input type="number" class="form-control" id="outlet" name="outlet" required min="1" max="10" step="1" 
-                            oninput="this.value = Math.max(1, Math.min(10, parseFloat(this.value)));">                            
+                            oninput="this.value = Math.max(1, Math.min(10, parseFloat(this.value)));">      
          
-09:42
-              </td>
-                        <td style="text-align: left;"></td>                        
+
+                        </td>
+                        <td style="text-align: left;">шт.</td>                        
                     </tr>
                 </table>
 
@@ -95,10 +106,10 @@
             
             
         </form>
-         <div class="window">
-            <h1>
+        <div class="window">
+            <h2>
                 Окно для просмотра модели
-            </h1>
+            </h2>
             <div id="okno">
             </div>
         </div>
@@ -106,68 +117,12 @@
     <div class="col-md-6 d-grid">
       <button type="submit" form = "input_form" class="btn btn-primary" id="calculation"> Подобрать</button>
     </div>
-    
+    <!-- <div class="col-md-6 d-grid">
+      <button class="btn btn-primary" id="clear"> Очистить</button>
+    </div> -->
+    <!-- <div class="col-md-6 d-grid">
+      <button class="btn btn-primary" id="button_add"> Добавить</button>
+    </div> -->
     
 </body>
 </html>
-<style>
-    
-    body {
-        font-family: Arial, Helvetica, sans-serif;
-        font-size: 14px;
-        max-width: 1704px;            
-    }
-    .form{
-        background: #F3F2F8;
-        display: flex;
-        flex-direction: row;
-        /* align-items: stretch;  */
-        max-width: 1704px;
-        /* margin: 0 auto; */
-        border-radius: 30px;
-        gap: 20px; /* промежуток между колонками */
-        padding: 20px;
-        /* box-sizing: border-box; */
-        min-height: 600px;
-    }
-    h1, h2, h3 {
-        font-weight: 700;
-        color: #0F1379;
-        max-width: 1704px;
-        padding: 0;
-    }
-    #input_form, .window {
-        background: #FFFFFF;
-        display: flex;
-        flex-direction: column;
-        align-items: flex-start;
-        max-width: 1704px;
-        border-radius: 30px;
-        width: 50%; /* Занимает половину ширины container-gray */
-        box-sizing: border-box; /* Включаем padding и border в ширину */
-    }
-    .initial_data{
-        width: 100%;
-    }
-    .parameters{
-        width: 100%;
-    }
-    .window, .input_form{
-        padding: 20px;
-        /* border-radius: 20px; */
-    }
-    #okno{
-        width: 100%; 
-        min-height: 100%;
-    }
-    .form-control{
-        width: 100%;
-        font-weight: 700;
-        text-align: right;
-        /* margin-right: 20px; */
-    }
-    #row1, #row2, #row3, #row4 {
-        height: 30px;
-
-    }
-</style>

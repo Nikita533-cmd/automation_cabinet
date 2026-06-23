@@ -66,10 +66,12 @@ class Cabinet(models.Model):
     A = models.FloatField('Высота')
     B = models.FloatField('Ширина')
     C = models.FloatField('Глубина')
+    A_panel = models.FloatField('Высота панели')
+    B_panel = models.FloatField('Ширина панели')
+    C_panel = models.FloatField('Глубина панели')
     Path = models.TextField('Путь к файлу')
-    i = models.FloatField('Сила тока')
     class Meta:
-        ordering = ('i',)
+        ordering = ('mass',)
         verbose_name = 'Модель шкафа'
         verbose_name_plural = 'Модели шкафов'
 
@@ -88,7 +90,7 @@ class ABR(models.Model):
     fiksator = models.ForeignKey(Fiksator, on_delete = models.CASCADE)
     i = models.FloatField('Сила тока')
     class Meta:
-        ordering = ('name',)
+        ordering = ('i',)
         verbose_name = 'Модель АВР'
         verbose_name_plural = 'Модели АВРов'
 

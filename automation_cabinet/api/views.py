@@ -78,11 +78,12 @@ class VRY():
         return False
     
     def generate_input(self):
+        print('adada')
         a = Automat.objects.filter(i__gte=self.i).order_by('i').first()
-        
+        print(a)
         if self.count == 2:
             self.B_min = a.B*2*1.3
-            self.scaf = Cabinet.objects.filter(B__gte=self.B_min).order_by('i').first()
+            self.scaf = Cabinet.objects.filter(B__gte=self.B_min).order_by('mass').first()
             # self.elements.append({'path': self.scaf.Path, 'X': 0, 'Y': 0, 'Z': 0})
             self.elements_obj.append(self.scaf)
             Y = self.scaf.A - a.A
@@ -93,7 +94,7 @@ class VRY():
             self.Y2 = Y - a.A*2
             return True
         self.B_min = a.B*1.3
-        self.scaf = Cabinet.objects.filter(B__gte=self.B_min).order_by('i').first()
+        self.scaf = Cabinet.objects.filter(B__gte=self.B_min).order_by('mass').first()
         
         # self.elements.append({'path': self.scaf.Path, 'X': 0, 'Y': 0, 'Z': 0})
         Y = self.scaf.A - a.A
@@ -145,17 +146,16 @@ def generate(request):
         outs=input_data['outs']
     )
     print("Входные данные:", input_data)
-    automat = get_object_or_404(Automat, i=40)
-    generated_elements = []
+    # generated_elements = []
 
-    element = {
-            'X': automat.A,
-            'Y': automat.B,
-            'Z': automat.C,
-            'path': automat.Path
-        }
-    generated_elements.append(element)
-    generated_elements.append(element)
+    # element = {
+    #         'X': automat.A,
+    #         'Y': automat.B,
+    #         'Z': automat.C,
+    #         'path': automat.Path
+    #     }
+    # generated_elements.append(element)
+    # generated_elements.append(element)
 
     output_data = {
         'mass': vry.mass,

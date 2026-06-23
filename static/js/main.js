@@ -16,10 +16,55 @@ count_outlet.addEventListener('change', (event) => {
     // create_outlet(value);      
     count_output.innerHTML = '';
     count_output.innerHTML = create_outlet(value);
+    eventlistener_outlet(value);
   }
 });
 
+///////////////////////////пересчет начальных вводов/////////////////////////////////
+const power_amper = document.getElementById(`power`);
+const power_kvt = document.getElementById('power_kvt');
+power_amper.addEventListener('change', (event) => {
+  const value = parseFloat(event.target.value); 
+  if (!isNaN(value)) { 
+    // console.log('value 28', value)
+    const kvt = value*220/1000;
+    power_kvt.value = kvt.toFixed(2);
+  }
+});
+power_kvt.addEventListener('change', (event) => {
+  const value = parseFloat(event.target.value); 
+  if (!isNaN(value)) { 
+    // console.log('value 26', value)
+    const amper = value*1000/220;
+    // console.log('amper 38', amper)
+    power_amper.value = amper.toFixed(2);
+  }
+});
 
+function eventlistener_outlet(i){
+    for (let j = 1; j <= i; j++) {
+        const power_amper_outlet = document.getElementById(`power_outlet_${j}`);
+        const power_kvt_outlet = document.getElementById(`power_outlet_kvt_${j}`);
+        power_amper_outlet.addEventListener('change', (event) => {
+        const value = parseFloat(event.target.value); 
+        if (!isNaN(value)) { 
+            // console.log('value 28', value)
+            const kvt_outlet = value*220/1000;
+            power_kvt_outlet.value = kvt_outlet.toFixed(2);
+        }
+        });
+        power_kvt_outlet.addEventListener('change', (event) => {
+        const value = parseFloat(event.target.value); 
+        if (!isNaN(value)) { 
+            // console.log('value 26', value)
+            const amper_outlet = value*1000/220;
+            // console.log('amper 38', amper)
+            power_amper_outlet.value = amper_outlet.toFixed(2);
+        }
+        });
+    }
+
+}
 
 // Функция для создания HTML контента отводящих элементов
 function create_outlet(i) {
@@ -31,12 +76,13 @@ function create_outlet(i) {
 
         create_outlet += `
 
-        <table class="parameters">
+        <table class="parameters table">
             <colgroup>
-                <col style="width: 45%;">
-                <col style="width: 25%;">
-                <col style="width: 15%;">
-                <col style="width: 15%;">
+                <col style="width: 40%;">
+                <col style="width: 20%;">
+                <col style="width: 10%;">
+                <col style="width: 20%;">
+                <col style="width: 10%;">
             </colgroup>
             <tr id="row1">
                 <td style="text-align: left; padding-left: 0px;">
@@ -45,10 +91,15 @@ function create_outlet(i) {
                     </label>
                 </td>
                 <td style="text-align: right;">
-                    <input type="number" class="form-control" id="power_outlet_${j}" name="power_outlet_${j}" required min="1" max="95" oninput="if(parseFloat(this.value) > 95) this.value = 95;">
+                    <input type="number" class="form-control" id="power_outlet_${j}" name="power_outlet_${j}" required min="1" max="95" 
+                    step="0.01" oninput="if(parseFloat(this.value) > 95) this.value = 95;">
                 </td>
-                <td style="text-align: left;">А</td>
-                <td id="recalculation" style="text-align: left;">-</td>
+                <td style="text-align: left;">Ампер</td>
+                <td style="text-align: right;">
+                    <input type="number" class="form-control" id="power_outlet_kvt_${j}" name="power_outlet_kvt_${j}" min="0.22" max="20.9" 
+                    step="0.01" oninput="if(parseFloat(this.value) > 20.9) this.value = 20.9;">
+                </td>
+                <td id="recalculation" style="text-align: left;">кВт</td>
             </tr>                    
         </table>    
         
@@ -60,40 +111,22 @@ function create_outlet(i) {
 }
 
 // !!!!!!!!!!!!!!!!!!!!!!!!!РАСЧЕТ - ПОДБОР !!!!!!!!!!!!!!!!!!!!!
-const calculation_Button = document.getElementById('calculation');
+const calculation_form = document.getElementById('input_form');
 
-calculation_Button.addEventListener('click', async function(e) {
+calculation_form.addEventListener('submit', async function(e) {
      e.preventDefault(); 
 
     const inputForm = document.getElementById('input_form'); 
   
-//   const powerInput = document.getElementById('power');
-//   const countSelect = document.getElementById('count');
     const checkboxAVR = document.getElementById('checkbox_AVR'); 
-//   const outletInput = document.getElementById('outlet');
-//   
-//   if (!powerInput.value) {
-//     alert("Не указана пропускная мощность щита! Пожалуйста, введите значение перед запуском расчета.");
-//     powerInput.focus();
-//     return;
-//   }
 
-//   if (!countSelect.value) {
-//     alert("Не указано количество вводов! Пожалуйста, выберите значение из списка перед запуском расчета.");
-//     countSelect.focus();
-//     return;
-//   }
-
-//   if (!outletInput.value) {
-//     alert("Не указано количество отводящих линий! Пожалуйста, введите значение перед запуском расчета.");
-//     outletInput.focus();
-//     return;
-//   }
-  
 // 1. Проверяем валидность формы средствами HTML5
     const isValid = this.checkValidity(); 
+    // alert("до валидности формы!!!!!!")
+    
 
     if (!isValid) {
+        // alert("форма не валидна!!!!!!")
         // Добавляем класс Bootstrap, который заставит все невалидные поля загореться красным
         this.classList.add('was-validated');
 
@@ -159,6 +192,10 @@ calculation_Button.addEventListener('click', async function(e) {
   
 });
 
+
+
+
+
 document.getElementById("asd");
 
 
@@ -219,8 +256,10 @@ function initLights() {
 }
 
 function initCamera() {
-    CAMERA = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 2000);
-    CAMERA.position.z = 1000;
+    CAMERA = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 100);
+    CAMERA.position.x = 0;
+    CAMERA.position.y = 0;
+    CAMERA.position.z = 2;
 }
 
 function initRenderer() {
@@ -242,7 +281,7 @@ function initLoaders() {
 function loadModel() {
     GLB_LOADER = new GLTFLoader();
     GLB_LOADER.load(
-        'static/models/sten.glb',
+        'static/models/shield/ЩРНМ-1.glb',
         function(gltf) {
             const model = gltf.scene;
             model.position.set(0, 0, 0);
@@ -251,8 +290,24 @@ function loadModel() {
             console.log('Модель загружена!');
             MAIN_MODEL = model;
             // Добавляем оси к модели
-            addAxesToModel(model, 500); // Длина осей — 5 единиц
-            },
+            addAxesToModel(model, 0.5); // Длина осей — 5 единиц
+            // Ищем дверцу и делаем её прозрачной
+            model.traverse(child => {
+
+                const type = child.type || 'Unknown';
+                const name = child.name || 'Без имени';
+                
+                console.log(`Тип: ${type}, Имя: "${name}"`);
+
+                if (child.name === 'mesh_0') {
+                    // Включаем прозрачность
+                    child.material.transparent = true;
+                    // Устанавливаем уровень прозрачности (0 — полностью прозрачно, 1 — непрозрачно)
+                    child.material.opacity = 0.3;
+                // console.log('Дверца стала прозрачной');
+                }
+            });
+        },
         function(xhr) { console.log((xhr.loaded / xhr.total * 100) + '%'); },
         function(error) { console.error(error); }
     );
@@ -270,8 +325,8 @@ function initControls() {
     CONTROLS = new OrbitControls(CAMERA, RENDERER.domElement);    
     CONTROLS.minPolarAngle = Math.PI * 1 / 4;
     CONTROLS.maxPolarAngle = Math.PI * 3 / 4;
-    CONTROLS.minDistance = 100;
-    CONTROLS.maxDistance = 1500;
+    CONTROLS.minDistance = 1;
+    CONTROLS.maxDistance = 30;
     CONTROLS.autoRotate = true;
     // CONTROLS.autoRotate = false;
     CONTROLS.autoRotateSpeed = -1.0;
@@ -294,6 +349,29 @@ function render() {
     
 }
 
+
+ ///////////////////////////////// Тестовое удаление модели ///////////////////////////////////////////
+// document.getElementById('clear').addEventListener('click', function() {
+//     if (MAIN_MODEL) {
+//         SCENE.remove(MAIN_MODEL);
+//         MAIN_MODEL.traverse(child => {
+//             if (child.isMesh) {
+//                 child.geometry.dispose();
+//                 if (Array.isArray(child.material)) {
+//                     child.material.forEach(mat => mat.dispose());
+//                 } else {
+//                     child.material.dispose();
+//                 } // ← добавлена закрывающая скобка для if (child.isMesh)
+//             } // ← добавлена закрывающая скобка для traverse
+//         });
+//         MAIN_MODEL = null;
+//         console.log('Модель удалена');
+//     } else {
+//         console.log('Нет модели для удаления');
+//     }
+// });
+
+
 // // Добавить модель
 // function addButton() {
 //   const button = document.getElementById('button_add');
@@ -303,8 +381,8 @@ function render() {
 // // Функция добавления модели относительно основной
 // function add_model() {
 
-//   const position_y = parseFloat(document.getElementById('position_y').value);
-//   const position_z = parseFloat(document.getElementById('position_z').value);   
+// //   const position_y = parseFloat(document.getElementById('position_y').value);
+// //   const position_z = parseFloat(document.getElementById('position_z').value);   
 
 //   const loader = new GLTFLoader();
 //   loader.load(
@@ -313,14 +391,14 @@ function render() {
 //         const newModel = gltf.scene;      
 //         newModel.position.copy(MAIN_MODEL.position);
 //         newModel.rotation.x = THREE.MathUtils.degToRad(90);
-//         newModel.position.x += 3;   // смещение по х
-//         newModel.position.y -= position_y;
-//         newModel.position.z += position_z;
+//         newModel.position.x -= 50;   // смещение по х
+//         newModel.position.y -= 100;
+//         newModel.position.z += 50;
         
 //         newModel.scale.copy(MAIN_MODEL.scale);
         
 //         SCENE.add(newModel);
-//         
+        
 //     },
 //     function(xhr) { console.log('Загрузка новой модели: ' + (xhr.loaded / xhr.total * 100) + '%'); },
 //     function(error) { console.error('Ошибка загрузки новой модели:', error); }
