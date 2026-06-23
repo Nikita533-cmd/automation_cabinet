@@ -95,9 +95,10 @@ class VRY():
             return True
         self.B_min = a.B*1.3
         self.scaf = Cabinet.objects.filter(B__gte=self.B_min).order_by('mass').first()
-        
+        # self.Y2 = Y - a.A*2
         # self.elements.append({'path': self.scaf.Path, 'X': 0, 'Y': 0, 'Z': 0})
         Y = self.scaf.A - a.A
+        self.Y2 = Y - a.A*2
         self.elements.append({'path': a.Path, 'X': (a.B/2 + self.otst), 'Y': Y, 'Z': 0})
         self.elements_obj.append(self.scaf)
         self.elements_obj.append(a)
@@ -117,6 +118,7 @@ class VRY():
                 X = X + bi + a.B/2
             self.elements.append({'path': a.Path, 'X': X, 'Y': self.Y2, 'Z': 0})
             self.elements_obj.append(a)
+            i=i+1
         # a = Automat.objects.filter(i__gte=self.i).first()
         # if self.count == 2:
         #     self.elements.append(a)
@@ -156,7 +158,17 @@ def generate(request):
     #     }
     # generated_elements.append(element)
     # generated_elements.append(element)
-
+    elements = vry.elements
+    ['X', 'Y', 'Z']
+    for e in elements:
+        e['X'] = e['X']/1000
+        e['Y'] = e['Y']/1000
+        e['Z'] = e['Z']/1000  
+        print(e)
+    cabinet = vry.scaf
+    cabinet.A = cabinet.A/1000
+    cabinet.B = cabinet.B/1000
+    cabinet.C = cabinet.C/1000
     output_data = {
         'mass': vry.mass,
         'price': vry.price,

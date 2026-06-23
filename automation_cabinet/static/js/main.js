@@ -3,42 +3,42 @@ import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 
 
-console.log("Жопа")
+// console.log("Жопа")
 
 // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!СЛУШАТЕЛИ!!!!!!!!!!!!!!!!!!!!!!!!!!!
 const count_outlet = document.getElementById(`outlet`);
 const count_output = document.getElementById('count_outlet') 
 console.log('count_outlet:', count_outlet);
 count_outlet.addEventListener('change', (event) => {
-  const value = parseInt(event.target.value, 10); 
-  if (!isNaN(value)) { 
+    const value = parseInt(event.target.value, 10); 
+    if (!isNaN(value)) { 
     console.log('value:', value)
     // create_outlet(value);      
     count_output.innerHTML = '';
     count_output.innerHTML = create_outlet(value);
     eventlistener_outlet(value);
-  }
+    }
 });
 
 ///////////////////////////пересчет начальных вводов/////////////////////////////////
 const power_amper = document.getElementById(`power`);
 const power_kvt = document.getElementById('power_kvt');
 power_amper.addEventListener('change', (event) => {
-  const value = parseFloat(event.target.value); 
-  if (!isNaN(value)) { 
+    const value = parseFloat(event.target.value); 
+    if (!isNaN(value)) { 
     // console.log('value 28', value)
     const kvt = value*220/1000;
     power_kvt.value = kvt.toFixed(2);
-  }
+    }
 });
 power_kvt.addEventListener('change', (event) => {
-  const value = parseFloat(event.target.value); 
-  if (!isNaN(value)) { 
+    const value = parseFloat(event.target.value); 
+    if (!isNaN(value)) { 
     // console.log('value 26', value)
     const amper = value*1000/220;
     // console.log('amper 38', amper)
     power_amper.value = amper.toFixed(2);
-  }
+    }
 });
 
 function eventlistener_outlet(i){
@@ -87,7 +87,7 @@ function create_outlet(i) {
             <tr id="row1">
                 <td style="text-align: left; padding-left: 0px;">
                     <label class="form-label">
-                         Отводящая линия № ${j}
+                            Отводящая линия № ${j}
                     </label>
                 </td>
                 <td style="text-align: right;">
@@ -114,10 +114,9 @@ function create_outlet(i) {
 const calculation_form = document.getElementById('input_form');
 
 calculation_form.addEventListener('submit', async function(e) {
-     e.preventDefault(); 
+        e.preventDefault(); 
 
     const inputForm = document.getElementById('input_form'); 
-  
     const checkboxAVR = document.getElementById('checkbox_AVR'); 
 
 // 1. Проверяем валидность формы средствами HTML5
@@ -159,7 +158,7 @@ calculation_form.addEventListener('submit', async function(e) {
         console.log(`${key}: ${value}`);
         if (key.includes("power_outlet"))
         {
-             dq.outs.push({name: key, i: value});
+            dq.outs.push({name: key, i: value});
         }
         else
         {
@@ -188,15 +187,49 @@ calculation_form.addEventListener('submit', async function(e) {
         
         const result = await response.json();
         console.log('Успех:', result);
-//      console.log(`  checkbox_AVR: ${dataObject.checkbox_AVR}`);
-  
+        for (const name in result) {
+            if (name === 'cabinet') {
+                for (const [key, value] of Object.entries(result[name])) {
+                if (key === 'Path') {
+                    // Теперь код честно остановится и дождется загрузки шкафа
+                    await loadModel(value);
+                }
+            }
+
+            }            
+            console.log('name:', name);
+        }
+
+        for (const name in result) {
+            if (name === 'elements') {
+            
+                for (const [key, value] of Object.entries(result[name])) {
+                    console.log('key204:', key);
+                    console.log('value204:', value);
+                    const { X, Y, Z, path } = value;
+                    // Теперь у вас есть готовые переменные, с которыми можно работать:
+                    console.log('Координата X:', X);       // Выведет: 50.5
+                    console.log('Координата Y:', Y);       // Выведет: 316.5
+                    console.log('Координата Z:', Z);       // Выведет: 0
+                    console.log('Путь к модели:', path);   // Выведет: "automat/Автоматический..." 
+
+                    await add_model(X,Y,Z,path)
+
+                }
+
+            }
+            
+            console.log('name:', name);
+
+        }
+//      console.log(`  checkbox_AVR: ${dataObject.checkbox_AVR}`);  
 });
 
 
 
 
 
-document.getElementById("asd");
+// document.getElementById("asd");
 
 
 
@@ -228,10 +261,10 @@ function init() {
     initRenderer();    
     initLoaders();
     initControls();
-   
-    loadModel();
+    // loadModel();
+    animate();
 
-   
+
 }
 
 function initScene() {
@@ -278,10 +311,11 @@ function initLoaders() {
     
 }
 
-function loadModel() {
+function loadModel(path) {
+
     GLB_LOADER = new GLTFLoader();
     GLB_LOADER.load(
-        'static/models/shield/ЩРНМ-1.glb',
+        `static/models/${path}`,
         function(gltf) {
             const model = gltf.scene;
             model.position.set(0, 0, 0);
@@ -297,7 +331,7 @@ function loadModel() {
                 const type = child.type || 'Unknown';
                 const name = child.name || 'Без имени';
                 
-                console.log(`Тип: ${type}, Имя: "${name}"`);
+                // console.log(`Тип: ${type}, Имя: "${name}"`);
 
                 if (child.name === 'mesh_0') {
                     // Включаем прозрачность
@@ -315,8 +349,8 @@ function loadModel() {
 }
 
 function addAxesToModel(model, axisLength = 3) {
-  const axesHelper = new THREE.AxesHelper(axisLength);
-  model.add(axesHelper);
+    const axesHelper = new THREE.AxesHelper(axisLength);
+    model.add(axesHelper);
 }
 
 
@@ -327,8 +361,8 @@ function initControls() {
     CONTROLS.maxPolarAngle = Math.PI * 3 / 4;
     CONTROLS.minDistance = 1;
     CONTROLS.maxDistance = 30;
-    CONTROLS.autoRotate = true;
-    // CONTROLS.autoRotate = false;
+    // CONTROLS.autoRotate = true;
+    CONTROLS.autoRotate = false;
     CONTROLS.autoRotateSpeed = -1.0;
     CONTROLS.update();
 
@@ -372,35 +406,42 @@ function render() {
 // });
 
 
-// // Добавить модель
+// Добавить модель
 // function addButton() {
 //   const button = document.getElementById('button_add');
 //   button.addEventListener('click', add_model);
 // }
 
-// // Функция добавления модели относительно основной
-// function add_model() {
+// Функция добавления модели относительно основной
+function add_model(X, Y, Z, path) {
+    // if (!MAIN_MODEL) {
+    //     console.error('MAIN_MODEL ещё не загружен');
+    //     return;
+    // }
 
-// //   const position_y = parseFloat(document.getElementById('position_y').value);
-// //   const position_z = parseFloat(document.getElementById('position_z').value);   
+//   const position_y = parseFloat(document.getElementById('position_y').value);
+//   const position_z = parseFloat(document.getElementById('position_z').value);   
 
-//   const loader = new GLTFLoader();
-//   loader.load(
-//     'static/models/rele.glb', // Путь к новой модели
-//     function(gltf) {
-//         const newModel = gltf.scene;      
-//         newModel.position.copy(MAIN_MODEL.position);
-//         newModel.rotation.x = THREE.MathUtils.degToRad(90);
-//         newModel.position.x -= 50;   // смещение по х
-//         newModel.position.y -= 100;
-//         newModel.position.z += 50;
+    const loader = new GLTFLoader();
+    loader.load(
+    `static/models/${path}`, // Путь к новой модели
+    // `static/models/16A.glb`, // Путь к новой модели
+    function(gltf) {
+        const newModel = gltf.scene;      
+        newModel.position.copy(MAIN_MODEL.position);
+        // newModel.rotation.x = THREE.MathUtils.degToRad(90);
+        newModel.position.x += X;   // смещение по х
+        newModel.position.y += Y;
+        newModel.position.z += 13.9/1000;
+        console.log('X',X);
+        console.log('Y',Y);
+        console.log('Z',Z);
+        // newModel.scale.copy(MAIN_MODEL.scale);
         
-//         newModel.scale.copy(MAIN_MODEL.scale);
+        SCENE.add(newModel);
         
-//         SCENE.add(newModel);
-        
-//     },
-//     function(xhr) { console.log('Загрузка новой модели: ' + (xhr.loaded / xhr.total * 100) + '%'); },
-//     function(error) { console.error('Ошибка загрузки новой модели:', error); }
-//   );
-// }
+    },
+    function(xhr) { console.log('Загрузка новой модели: ' + (xhr.loaded / xhr.total * 100) + '%'); },
+    function(error) { console.error('Ошибка загрузки новой модели:', error); }
+  );
+}
