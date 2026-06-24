@@ -24,6 +24,10 @@
     <link href="{% static 'css/styles.css' %}?_v08" rel="stylesheet">
 </head>
 <body>
+    <div class="loader-container">
+        <div class="loader"></div>
+        <h1>Подождите, страница загружается...</h1>            
+    </div>
     <div class="container my-4">
         <h1>
             Конфигуратор шкафов                    
@@ -36,31 +40,43 @@
             <div class="initial_data">
                 <table class="parameters table">
                     <colgroup>
-                        <col style="width: 40%;">
-                        <col style="width: 20%;">
+                        <col style="width: 23.3%;">
                         <col style="width: 10%;">
-                        <col style="width: 20%;">
+                        <col style="width: 23.3%;">
                         <col style="width: 10%;">
+                        <col style="width: 23.3%;">
+                        <col style="width: 10%;">                        
                     </colgroup>
-                    <tr id="row1">
-                        <td style="text-align: left; padding-left: 0px;">
+                    <tr id="row1" >
+                        <td colspan="6" style="text-align: center; ">
                             <label class="form-label">
                                 Пропускная мощность щита
                             </label>
                         </td>
+                    </tr>
+                    <tr id="row2">
+                        <td style="text-align: right;">
+                            <select class="form-control" id="voltage" name="voltage" required>
+                                <option>220</option>
+                                <option>380</option>
+                            </select>
+                        </td>
+                        <td style="text-align: left;">В</td>
                         <td style="text-align: right;">
                             <input type="number" class="form-control" id="power" name="power" required min="1" max="95" step="0.01"
                             oninput="if(parseFloat(this.value) > 95) this.value = 95;">
                         </td>
-                        <td style="text-align: left;">Ампер</td>
+                        <td style="text-align: left;">А</td>
                         <td style="text-align: right;">
-                            <input type="number" class="form-control" id="power_kvt" name="power_kvt" min="0.22" max="20.9" step="0.01" 
-                            oninput="if(parseFloat(this.value) > 20.9) this.value = 20.9;">
+                            <input type="number" class="form-control" id="power_kvt" name="power_kvt" min="0.22" max="36.10" step="0.01" 
+                            oninput="if(parseFloat(this.value) > 36.10) this.value = 36.10;">
                         </td>
                         <td id="recalculation" style="text-align: left;">кВт</td>
                     </tr>
-                    <tr id="row2">
-                        <td style="text-align: left; padding-left: 0px;">
+                        
+                    
+                    <tr id="row3">
+                        <td colspan="4" style="text-align: left; padding-left: 0px;">
                             <label class="form-label">
                                 Количество вводов
                             </label>
@@ -73,8 +89,8 @@
                         </td>
                         <td style="text-align: left;">шт.</td>                        
                     </tr>
-                    <tr id="row3">
-                        <td style="text-align: left; padding-left: 0px;">
+                    <tr id="row4">
+                        <td colspan="4" style="text-align: left; padding-left: 0px;">
                             <label class="form-label">
                                 Автоматический ввод резерва
                             </label>
@@ -84,8 +100,8 @@
                         </td>
                         <td style="text-align: left;"></td>                        
                     </tr>
-                    <tr id="row4">
-                        <td style="text-align: left; padding-left: 0px;">
+                    <tr id="row5">
+                        <td colspan="4" style="text-align: left; padding-left: 0px;">
                             <label class="form-label">
                                 Количество отводящих линий
                             </label>

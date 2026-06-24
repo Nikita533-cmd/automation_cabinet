@@ -35,18 +35,26 @@ class Response2Serializer(serializers.Serializer):
     Y = serializers.FloatField()
     Z = serializers.FloatField()
     path = serializers.CharField()
-    
+
+class BOMdataSerializer(serializers.Serializer):
+    """Сериализатор для связующей модели игредиент-рецепт с полем 'amount'."""
+    name = serializers.CharField()
+    mass = serializers.FloatField()
+    count = serializers.IntegerField()
+
 class ResponseSerializer(serializers.Serializer):
     """Сериализатор для связующей модели игредиент-рецепт с полем 'amount'."""
     mass = serializers.FloatField()
     price = serializers.FloatField()
     elements = Response2Serializer(many=True)
     cabinet = CabinetSerializer(read_only=True)
+    BOMdata = BOMdataSerializer(many=True)
 
 class OutsSerializer(serializers.Serializer):
     """Сериализатор для связующей модели игредиент-рецепт с полем 'amount'."""
     name = serializers.CharField()
     i = serializers.FloatField()
+    voltage = serializers.IntegerField()
 
 
 class RequestSerializer(serializers.Serializer):
@@ -56,6 +64,7 @@ class RequestSerializer(serializers.Serializer):
     checkbox_AVR = serializers.BooleanField()
     outlet = serializers.IntegerField()
     outs = OutsSerializer(many=True)
+    voltage = serializers.IntegerField()
 
 
     def validate(self, attrs):

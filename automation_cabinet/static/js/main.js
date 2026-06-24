@@ -3,7 +3,7 @@ import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 
 
-// console.log("Жопа")
+
 
 // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!СЛУШАТЕЛИ!!!!!!!!!!!!!!!!!!!!!!!!!!!
 const count_outlet = document.getElementById(`outlet`);
@@ -22,12 +22,13 @@ count_outlet.addEventListener('change', (event) => {
 
 ///////////////////////////пересчет начальных вводов/////////////////////////////////
 const power_amper = document.getElementById(`power`);
+const voltage = document.getElementById(`voltage`);
 const power_kvt = document.getElementById('power_kvt');
 power_amper.addEventListener('change', (event) => {
     const value = parseFloat(event.target.value); 
     if (!isNaN(value)) { 
     // console.log('value 28', value)
-    const kvt = value*220/1000;
+    const kvt = value*voltage.value/1000;
     power_kvt.value = kvt.toFixed(2);
     }
 });
@@ -35,21 +36,26 @@ power_kvt.addEventListener('change', (event) => {
     const value = parseFloat(event.target.value); 
     if (!isNaN(value)) { 
     // console.log('value 26', value)
-    const amper = value*1000/220;
+    const amper = value*1000/voltage.value;
     // console.log('amper 38', amper)
     power_amper.value = amper.toFixed(2);
     }
+});
+voltage.addEventListener('change', (event) => {
+    const changeEvent = new Event('change');
+    power_amper.dispatchEvent(changeEvent);
 });
 
 function eventlistener_outlet(i){
     for (let j = 1; j <= i; j++) {
         const power_amper_outlet = document.getElementById(`power_outlet_${j}`);
-        const power_kvt_outlet = document.getElementById(`power_outlet_kvt_${j}`);
+        const power_kvt_outlet = document.getElementById(`power__outlet_kvt_${j}`);
+        const voltage_outlet = document.getElementById(`voltage_outlet_${j}`);
         power_amper_outlet.addEventListener('change', (event) => {
         const value = parseFloat(event.target.value); 
         if (!isNaN(value)) { 
             // console.log('value 28', value)
-            const kvt_outlet = value*220/1000;
+            const kvt_outlet = value*voltage_outlet.value/1000;
             power_kvt_outlet.value = kvt_outlet.toFixed(2);
         }
         });
@@ -57,10 +63,14 @@ function eventlistener_outlet(i){
         const value = parseFloat(event.target.value); 
         if (!isNaN(value)) { 
             // console.log('value 26', value)
-            const amper_outlet = value*1000/220;
+            const amper_outlet = value*1000/voltage_outlet.value;
             // console.log('amper 38', amper)
             power_amper_outlet.value = amper_outlet.toFixed(2);
         }
+        });
+        voltage_outlet.addEventListener('change', (event) => {
+            const changeEvent = new Event('change');
+            power_amper_outlet.dispatchEvent(changeEvent);
         });
     }
 
@@ -78,26 +88,36 @@ function create_outlet(i) {
 
         <table class="parameters table">
             <colgroup>
-                <col style="width: 40%;">
-                <col style="width: 20%;">
+                <col style="width: 23.3%;">
                 <col style="width: 10%;">
-                <col style="width: 20%;">
+                <col style="width: 23.3%;">
+                <col style="width: 10%;">
+                <col style="width: 23.3%;">
                 <col style="width: 10%;">
             </colgroup>
             <tr id="row1">
-                <td style="text-align: left; padding-left: 0px;">
-                    <label class="form-label">
+                <td colspan="6" style="text-align: center; >
+                    <label class="form-label" >
                             Отводящая линия № ${j}
                     </label>
                 </td>
+            </tr>
+            <tr id="row2">
+                <td style="text-align: right;">
+                    <select class="form-control" id="voltage_outlet_${j}" name="voltage_outlet_${j}" required>
+                        <option>220</option>
+                        <option>380</option>
+                    </select>
+                </td>
+                <td style="text-align: left;">В</td>
                 <td style="text-align: right;">
                     <input type="number" class="form-control" id="power_outlet_${j}" name="power_outlet_${j}" required min="1" max="95" 
                     step="0.01" oninput="if(parseFloat(this.value) > 95) this.value = 95;">
                 </td>
-                <td style="text-align: left;">Ампер</td>
+                <td style="text-align: left;">А</td>
                 <td style="text-align: right;">
-                    <input type="number" class="form-control" id="power_outlet_kvt_${j}" name="power_outlet_kvt_${j}" min="0.22" max="20.9" 
-                    step="0.01" oninput="if(parseFloat(this.value) > 20.9) this.value = 20.9;">
+                    <input type="number" class="form-control" id="power__outlet_kvt_${j}" name="power__outlet_kvt_${j}" min="0.22" max="36.10" 
+                    step="0.01" oninput="if(parseFloat(this.value) > 36.10) this.value = 36.10;">
                 </td>
                 <td id="recalculation" style="text-align: left;">кВт</td>
             </tr>                    
@@ -156,19 +176,33 @@ calculation_form.addEventListener('submit', async function(e) {
     formData.set('checkbox_AVR', checkboxAVR.checked);
     const dq = { outs: [] };
     // console.log('--- FormData ---');
+
+
+    for (let j = 1; j <= parseInt(document.getElementById('outlet').value, 10); j++) {
+        const currentOut = {            
+            name: `Отводящая линия № ${j}`,
+            i: parseFloat(document.getElementById(`power_outlet_${j}`)?.value),            
+            voltage: parseFloat(document.getElementById(`voltage_outlet_${j}`)?.value) 
+        };
+        dq.outs.push(currentOut);
+    }
+
     for (const [key, value] of formData.entries()) {
         // console.log(`${key}: ${value}`);
-        if (key.includes("power_outlet"))
-        {
-            dq.outs.push({name: key, i: value});
-        }
-        else
-        {
-            dq[key]=value;
-        }
-        
+        // if (key.includes("power_outlet"))
+        // {
+        //     dq.outs.push({name: key, i: value});
+        // }
+        // else if (key.includes("voltage_outlet"))
+        // {
+        //     dq.outs.push({name: key, u: value});
+        // }
+        // else {
+        //     dq[key]=value;
+        // }
+        dq[key]=value;
     }
-    // console.log('--- Конец FormData ---', dq);
+    console.log('--- Конец FormData ---', dq);
 
     // console.log(formData);
     const token = localStorage.getItem('access_token');
@@ -271,6 +305,7 @@ let ADD_MODELS = [];
 main();
 
 function main() {
+    // document.getElementsByClassName('loader-container')[0].style.display = 'flex';
     init();
     // animate();
     // addButton();
@@ -284,6 +319,7 @@ function init() {
     initControls();
     // loadModel();
     animate();
+    document.getElementsByClassName('loader-container')[0].style.display = 'none';
 
 
 }

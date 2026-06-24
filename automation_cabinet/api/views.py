@@ -33,9 +33,10 @@ def get_i(power):
 
 
 class VRY():
-    otst = 10
+    otst = 50
 
-    def __init__(self, power, count, checkbox_AVR, outlet, outs):
+    def __init__(self, power, count, checkbox_AVR, outlet, outs, voltage):
+        self.voltage = voltage
         self.power = power
         self.count = count
         self.checkbox_AVR = checkbox_AVR
@@ -48,12 +49,23 @@ class VRY():
         self.scaf = None
         # self.i = get_i(power)
         self.i = power
+        self.getScaf()
         self.generate_input()
         self.generate_output()
         self.getABR()
-        
-        
-        print(self.elements)
+    @property
+    def BOMdata(self):
+        listdata ={}
+        for e in self.elements_obj:
+            if listdata.get(e.name):
+                listdata[e.name]['mass'] = round(listdata[e.name]['mass'] + e.mass, ndigits=2)
+                listdata[e.name]['count'] = listdata[e.name]['count'] + 1
+            else:
+                listdata[e.name] = {'name': e.name, 'mass': round(e.mass, ndigits=2), 'count': 1}
+        listd = []
+        for v in listdata.values():
+            listd.append(v)
+        return listd
     @property    
     def mass(self):
         mass = 0
@@ -69,6 +81,17 @@ class VRY():
 
     def get_i(power):
         return power/220*1000
+
+    def getScaf(self):
+        a = Automat.objects.filter(i__gte=self.i).order_by('i').first()
+        B_up = a.B*self.count*1.3
+        B_down = self.otst*2
+        for e in self.outs:
+            a = Automat.objects.filter(i__gte=e['i']).order_by('i').first()
+            B_down = B_down + a.B
+        self.scaf = Cabinet.objects.filter(B_panel__gte=B_down).order_by('mass').first()
+        
+
         
     def getABR(self):
         if self.checkbox_AVR:
@@ -78,27 +101,26 @@ class VRY():
         return False
     
     def generate_input(self):
-        print('adada')
-        a = Automat.objects.filter(i__gte=self.i).order_by('i').first()
-        print(a)
+        Phase=3
+        if self.voltage == 220:
+            Phase=1
+        a = Automat.objects.filter(i__gte=self.i).filter(Phase__gte=Phase).order_by('i').first()
         if self.count == 2:
             self.B_min = a.B*2*1.3
-            self.scaf = Cabinet.objects.filter(B__gte=self.B_min).order_by('mass').first()
-            # self.elements.append({'path': self.scaf.Path, 'X': 0, 'Y': 0, 'Z': 0})
+            # self.scaf = Cabinet.objects.filter(B_panel__gte=self.B_min).order_by('mass').first()
+            print(self.scaf)
             self.elements_obj.append(self.scaf)
-            Y = self.scaf.A - a.A
+            Y = self.scaf.A_panel - a.A
             self.elements.append({'path': a.Path, 'X': (a.B/2 + self.otst), 'Y': Y, 'Z': 0})
-            self.elements.append({'path': a.Path, 'X': (self.scaf.B - self.otst - a.B/2), 'Y': Y, 'Z': 0})
+            self.elements.append({'path': a.Path, 'X': (self.scaf.B_panel - self.otst - a.B/2), 'Y': Y, 'Z': 0})
             self.elements_obj.append(a)
             self.elements_obj.append(a)
             self.Y2 = Y - a.A*2
             return True
         self.B_min = a.B*1.3
-        self.scaf = Cabinet.objects.filter(B__gte=self.B_min).order_by('mass').first()
-        # self.Y2 = Y - a.A*2
-        # self.elements.append({'path': self.scaf.Path, 'X': 0, 'Y': 0, 'Z': 0})
+        # self.scaf = Cabinet.objects.filter(B__gte=self.B_min).order_by('mass').first()
         Y = self.scaf.A - a.A
-        self.Y2 = Y - a.A*2
+        self.Y2 = Y - a.A*1.5
         self.elements.append({'path': a.Path, 'X': (a.B/2 + self.otst), 'Y': Y, 'Z': 0})
         self.elements_obj.append(self.scaf)
         self.elements_obj.append(a)
@@ -109,16 +131,27 @@ class VRY():
         i = 0
         X=0
         bi =0 
+        print(self.outs)
         for e in self.outs:
-            a = Automat.objects.filter(i__gte=e['i']).order_by('i').first()
+            Phase=3
+            if e['voltage'] == 220:
+                Phase=1
+            a = Automat.objects.filter(i__gte=e['i']).filter(Phase__gte=Phase).order_by('i').first()
             bi = a.B/2
             if i==0:
                 X = a.B/2 + self.otst
             else:
                 X = X + bi + a.B/2
+            if X>self.scaf.B_panel:
+                X = a.B/2 + self.otst
+                self.Y2 = self.Y2 - a.A*2
             self.elements.append({'path': a.Path, 'X': X, 'Y': self.Y2, 'Z': 0})
             self.elements_obj.append(a)
-            i=i+1
+            i = i + 1
+            # if self.Y2-a.A*1.5:
+            #     A = self.scaf.A_panel+ abs(self.Y2-a.A*1.5)
+            #     self.scaf = Cabinet.objects.filter(A_panel__gte=A).order_by('mass').first()
+        
         # a = Automat.objects.filter(i__gte=self.i).first()
         # if self.count == 2:
         #     self.elements.append(a)
@@ -145,7 +178,8 @@ def generate(request):
         count=input_data['count'],
         checkbox_AVR=input_data['checkbox_AVR'],
         outlet=input_data['outlet'],
-        outs=input_data['outs']
+        outs=input_data['outs'],
+        voltage=input_data['voltage'],
     )
     print("Входные данные:", input_data)
     # generated_elements = []
@@ -173,8 +207,8 @@ def generate(request):
         'mass': vry.mass,
         'price': vry.price,
         'elements': vry.elements,
-        'cabinet': vry.scaf
+        'cabinet': vry.scaf,
+        'BOMdata': vry.BOMdata,
     }
-    print(output_data)
     serializer = ResponseSerializer(output_data)
-    return Response(serializer.data, status=200)#jndtn
+    return Response(serializer.data, status=200)

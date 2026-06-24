@@ -70,3 +70,57 @@ body {
         height: 30px;
 
     }
+
+    .loader-container {
+      display: none;       
+      
+      position: fixed; /* на весь экран */
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 9999; /* Переносим z-index сюда, чтобы перекрыть ВСЮ страницу */
+
+      
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      
+      /* Интерактив */
+      pointer-events: auto;     
+      cursor: wait;     
+      background: rgba(255, 255, 255, 0.8); /* Чуть плотнее фон, чтобы контент под ним был менее активным визуально */
+    }
+
+    .loader {        
+        width: 11em; 
+        height: 11em;    
+        border: 1.2em solid transparent;     
+        border-top: 1.2em solid #000000;  
+        /* border-top: 1.2em solid #010105;      */
+        border-radius: 50%;
+        animation: load3 1.4s infinite linear;
+        margin-bottom: 20px; /* Отступ между спиннером и текстом h1 */
+    }
+    @-webkit-keyframes load3 {
+    0% {
+      -webkit-transform: rotate(0deg);
+      transform: rotate(0deg);
+    }
+    100% {
+      -webkit-transform: rotate(360deg);
+      transform: rotate(360deg);
+    }
+  }
+  @keyframes load3 {
+    0% {
+      -webkit-transform: rotate(0deg);
+      transform: rotate(0deg);
+    }
+    100% {
+      -webkit-transform: rotate(360deg);
+      transform: rotate(360deg);
+    }
+  }
