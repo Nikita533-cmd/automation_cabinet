@@ -290,7 +290,7 @@ function init() {
 
 function initScene() {
     SCENE = new THREE.Scene();
-    SCENE.background = new THREE.Color(0x87CEEB); // Голубой фон (небо)
+    SCENE.background = new THREE.Color(0xffffff); // Голубой фон (небо)
     initLights();
 }
 
