@@ -67,8 +67,10 @@ function eventlistener_outlet(i){
         const power_amper_outlet = document.getElementById(`power_outlet_${j}`);
         const power_kvt_outlet = document.getElementById(`power__outlet_kvt_${j}`);
         const voltage_outlet = document.getElementById(`voltage_outlet_${j}`);
+
         power_amper_outlet.addEventListener('change', (event) => {
-        const value = parseFloat(event.target.value); 
+        const value = parseFloat(event.target.value);         
+        
         if (!isNaN(value)) { 
             // console.log('value 28', value)
             const kvt_outlet = value*voltage_outlet.value/1000;
@@ -84,12 +86,14 @@ function eventlistener_outlet(i){
             power_amper_outlet.value = amper_outlet.toFixed(2);
         }
         });
+
         voltage_outlet.addEventListener('change', (event) => {
             const changeEvent = new Event('change');
             power_amper_outlet.dispatchEvent(changeEvent);
 
             if (voltage.value === '220') {
                 voltage_outlet.value = "220";
+                power_amper_outlet.dispatchEvent(changeEvent);
                 alert("Увеличьте напряжение ввода!");
             }
         });
@@ -138,7 +142,17 @@ function create_outlet(i) {
                 <td style="text-align: left;">А</td>
                 <td style="text-align: right;">
                     <input type="number" class="form-control" id="power__outlet_kvt_${j}" name="power__outlet_kvt_${j}" min="0.22" max="36.10" 
-                    step="0.01" oninput="if(parseFloat(this.value) > 36.10) this.value = 36.10;">
+                    step="0.01" oninput="const voltage = document.getElementById('voltage_outlet_${j}');
+                            if (voltage) {
+                                const voltage_value = parseFloat(voltage.value);
+                                const value = parseFloat(this.value);                                                                
+                                if (voltage_value === 220 && value > 20.90) {
+                                    this.value = '20.90';
+                                }                                 
+                                else if (value > 36.10) {
+                                    this.value = '36.10';
+                                }
+                            }">
                 </td>
                 <td id="recalculation" style="text-align: left;">кВт</td>
             </tr>                    

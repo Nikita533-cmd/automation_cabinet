@@ -69,7 +69,17 @@
                         <td style="text-align: left;">А</td>
                         <td style="text-align: right;">
                             <input type="number" class="form-control" id="power_kvt" name="power_kvt" min="0.22" max="36.10" step="0.01" 
-                            oninput="if(parseFloat(this.value) > 36.10) this.value = 36.10;">
+                            oninput="const voltage = document.getElementById('voltage');
+                            if (voltage) {
+                                const voltage_value = parseFloat(voltage.value);
+                                const value = parseFloat(this.value);                                                                
+                                if (voltage_value === 220 && value > 20.90) {
+                                    this.value = '20.90';
+                                }                                 
+                                else if (value > 36.10) {
+                                    this.value = '36.10';
+                                }
+                            }">
                         </td>
                         <td id="recalculation" style="text-align: left;">кВт</td>
                     </tr>
