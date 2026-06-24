@@ -20,6 +20,21 @@ count_outlet.addEventListener('change', (event) => {
     }
 });
 
+////////////////////////////////// вкл -выкл - АВР
+const row4 = document.getElementById('row4'); ///////////// строка наличия АВР
+const count_input = document.getElementById(`count`);
+count_input.addEventListener('click', function () {
+    
+    if (parseInt(count_input.value, 10) === 2) {
+            
+        row4.style.display = 'table-row';
+    }
+    else {
+        row4.style.display = 'none';
+    }
+});
+
+
 ///////////////////////////пересчет начальных вводов/////////////////////////////////
 const power_amper = document.getElementById(`power`);
 const voltage = document.getElementById(`voltage`);
@@ -44,6 +59,7 @@ power_kvt.addEventListener('change', (event) => {
 voltage.addEventListener('change', (event) => {
     const changeEvent = new Event('change');
     power_amper.dispatchEvent(changeEvent);
+    count_outlet.dispatchEvent(changeEvent);
 });
 
 function eventlistener_outlet(i){
@@ -71,6 +87,11 @@ function eventlistener_outlet(i){
         voltage_outlet.addEventListener('change', (event) => {
             const changeEvent = new Event('change');
             power_amper_outlet.dispatchEvent(changeEvent);
+
+            if (voltage.value === '220') {
+                voltage_outlet.value = "220";
+                alert("Увеличьте напряжение ввода!");
+            }
         });
     }
 
@@ -95,14 +116,14 @@ function create_outlet(i) {
                 <col style="width: 23.3%;">
                 <col style="width: 10%;">
             </colgroup>
-            <tr id="row1">
+            <tr id="row1_outlet">
                 <td colspan="6" style="text-align: center; >
                     <label class="form-label" >
                             Отводящая линия № ${j}
                     </label>
                 </td>
             </tr>
-            <tr id="row2">
+            <tr id="row2_outlet">
                 <td style="text-align: right;">
                     <select class="form-control" id="voltage_outlet_${j}" name="voltage_outlet_${j}" required>
                         <option>220</option>
@@ -171,9 +192,15 @@ calculation_form.addEventListener('submit', async function(e) {
     const formData = new FormData(inputForm);
     const dataObject = Object.fromEntries(formData.entries());
 
-    // Добавляем состояние чекбокса вручную (FormData не включает неотмеченные чекбоксы)
     dataObject.checkbox_AVR = checkboxAVR.checked ? 'on' : 'off';
-    formData.set('checkbox_AVR', checkboxAVR.checked);
+        formData.set('checkbox_AVR', checkboxAVR.checked);
+    // Добавляем состояние чекбокса вручную (FormData не включает неотмеченные чекбоксы)
+    // row4.style.display = 'table-row';
+    // if (row4.style.display === "table-row") {
+        // dataObject.checkbox_AVR = checkboxAVR.checked ? 'on' : 'off';
+        // formData.set('checkbox_AVR', checkboxAVR.checked);
+    // }
+    
     const dq = { outs: [] };
     // console.log('--- FormData ---');
 
