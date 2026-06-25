@@ -1,0 +1,68 @@
+{% load static %}
+{% load django_bootstrap5 %}
+<!DOCTYPE html>
+<html lang="ru">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="icon" href="{% static 'img/fav/favicon.ico' %}" type="image">
+    <link rel="apple-touch-icon" sizes="180x180" href="{% static 'img/fav/apple-touch-icon.png' %}">
+    <link rel="icon" type="image/png" sizes="32x32" href="{% static 'img/fav/favicon-32x32.png' %}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{% static 'img/fav/favicon-16x16.png' %}">
+    <title>
+      {% block title %}{% endblock %}
+    </title>
+    {% bootstrap_css %}
+  </head>
+  <body>
+    <main>
+      <div class="container py-5">
+        ЖДопа
+        <button id="butt1">Жми</button>
+      </div>
+    </main>
+
+
+    <script>
+
+
+function getCSRFToken() {
+    // alert ("fgfgfg")
+    if (csrfToken) return csrfToken;
+     
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, 'csrftoken'.length + 1) === ('csrftoken' + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring('csrftoken'.length + 1));
+                    break;
+                }
+            }
+        }
+        csrfToken = cookieValue;
+        return cookieValue;
+    }
+
+      async function tets() {
+
+      try {
+        const response = await fetch('api/test/')
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`)
+        }
+        const data = await response.json()
+
+        tubeTypeSelect2.innerHTML = '<option value=""></option>'
+        data.forEach(tubeType => {
+          tubeTypeSelect2.innerHTML += `<option value="${tubeType.id}">${tubeType.name}</option>`
+        })
+      } catch (error) {
+        console.error('Fetch error:', error)
+      }
+    }
+    document.getElementById('butt1').addEventListener('click', tets)
+    </script>
+  </body>
+</html>
