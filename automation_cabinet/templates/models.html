@@ -18,7 +18,7 @@
         }
     }
     </script> 
-    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script> 
     <script type="module" src="{% static 'js/main.js' %}"></script> 
     {% comment %} <script type="module" src="./main.js"></script> {% endcomment %}
     <link href="{% static 'css/styles.css' %}?_v08" rel="stylesheet">
@@ -100,6 +100,7 @@
                         <td style="text-align: left;">шт.</td>                        
                     </tr>
                     <tr id="row4" style="display: none;">
+                    <!-- <tr id="row4"> -->
                         <td colspan="4" style="text-align: left; padding-left: 0px;">
                             <label class="form-label">
                                 Автоматический ввод резерва
@@ -152,6 +153,9 @@
     <div class="col-md-2 d-grid">
       <button type="submit" form = "input_form" class="btn btn-primary" id="calculation"> Подобрать</button>
     </div>
+    <div class="col-md-2 d-grid" style="margin-top: 20px; ">
+      <button id="save_results_btn" class="btn btn-primary" style="display: none;"> Скачать спецификацию</button>
+    </div>
     <!-- <div class="col-md-6 d-grid">
       <button class="btn btn-primary" id="clear"> Очистить</button>
     </div> -->
@@ -160,4 +164,19 @@
     </div> -->
     
 </body>
+<div id="pdf_content" style="display: none;">
+    <h3>Спецификация</h3>
+    <!-- <table id="pdf_table" style="width: 100%; font-size: 12px;"> -->
+    <table id="pdf_table" class="table table-bordered" style="width: 100%; font-size: 12px; table-layout: fixed;">
+        <thead>
+            <tr>
+                <th style="width: 50%;">Наименование</th>
+                <th style="width: 25%;">Масса, кг</th>
+                <th style="width: 25%;">Количество, шт</th>
+            </tr>
+        </thead>
+        <tbody id="pdf_body"></tbody>        
+    </table>
+    <!-- <div style="height: 40px; width: 100%;"></div> -->
+</div>
 </html>

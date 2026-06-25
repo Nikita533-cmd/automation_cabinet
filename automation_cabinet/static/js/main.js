@@ -20,19 +20,19 @@ count_outlet.addEventListener('change', (event) => {
     }
 });
 
-////////////////////////////////// вкл -выкл - АВР
-const row4 = document.getElementById('row4'); ///////////// строка наличия АВР
-const count_input = document.getElementById(`count`);
-count_input.addEventListener('click', function () {
+// ////////////////////////////////// вкл -выкл - АВР
+// const row4 = document.getElementById('row4'); ///////////// строка наличия АВР
+// const count_input = document.getElementById(`count`);
+// count_input.addEventListener('click', function () {
     
-    if (parseInt(count_input.value, 10) === 2) {
+//     if (parseInt(count_input.value, 10) === 2) {
             
-        row4.style.display = 'table-row';
-    }
-    else {
-        row4.style.display = 'none';
-    }
-});
+//         row4.style.display = 'table-row';
+//     }
+//     else {
+//         row4.style.display = 'none';
+//     }
+// });
 
 
 ///////////////////////////пересчет начальных вводов/////////////////////////////////
@@ -206,8 +206,12 @@ calculation_form.addEventListener('submit', async function(e) {
     const formData = new FormData(inputForm);
     const dataObject = Object.fromEntries(formData.entries());
 
-    dataObject.checkbox_AVR = checkboxAVR.checked ? 'on' : 'off';
-        formData.set('checkbox_AVR', checkboxAVR.checked);
+    const count_input = document.getElementById(`count`);
+    checkboxAVR.checked = (parseInt(count_input.value, 10) === 2);    
+    formData.set('checkbox_AVR', checkboxAVR.checked);
+
+    // dataObject.checkbox_AVR = checkboxAVR.checked ? 'on' : 'off';
+    // formData.set('checkbox_AVR', checkboxAVR.checked);
     // Добавляем состояние чекбокса вручную (FormData не включает неотмеченные чекбоксы)
     // row4.style.display = 'table-row';
     // if (row4.style.display === "table-row") {
@@ -264,6 +268,8 @@ calculation_form.addEventListener('submit', async function(e) {
         
         const result = await response.json();
         console.log('Успех:', result);
+
+
 
         
         const general_price = document.getElementById('price');
@@ -327,7 +333,77 @@ calculation_form.addEventListener('submit', async function(e) {
             }            
             // console.log('name:', name);
         }
-//      console.log(`  checkbox_AVR: ${dataObject.checkbox_AVR}`);  
+    //      console.log(`  checkbox_AVR: ${dataObject.checkbox_AVR}`);
+
+    const tbody = document.getElementById('pdf_body'); 
+
+    tbody.innerHTML = ''; // очищаем 
+    
+    const rows = result.BOMdata || [];
+
+    console.log('rows344:', rows);
+
+    rows.forEach(item => {
+        const tr = document.createElement('tr');
+        const name = item.name || '-';
+        const mass = (item.mass !== undefined && item.mass !== null) ? parseFloat(item.mass) : 0;
+        const count = (item.count !== undefined && item.count !== null) ? parseInt(item.count, 10) : 0;
+
+        tr.innerHTML = `
+            <td style="word-wrap: break-word; vertical-align: top;">${name}</td>
+            <td style="text-align: right; vertical-align: top;">${mass.toFixed(2)}</td>
+            <td style="text-align: center; vertical-align: top;">${count}</td>
+        `;
+        tbody.appendChild(tr);
+    });
+
+    const buttonPDF = document.getElementById('save_results_btn');    
+
+    buttonPDF.style.display = 'inline-block'; // показываем кнопку
+
+    buttonPDF.onclick = () => {
+        // Сброс скролла, чтобы html2canvas начал с (0,0)
+        window.scrollTo(0, 0);
+
+        const element = document.getElementById('pdf_content');
+        if (!element) {
+            console.error('Элемент pdf_content не найден');
+            return;
+        }
+
+        const originalDisplay = element.style.display;
+        element.style.display = 'block';
+
+        const opt = {
+            margin: [10, 10, 10, 10],
+            filename: 'specification.pdf',
+            image: { type: 'png', quality: 1 },
+            html2canvas: {
+                scale: 2,
+                useCORS: true,
+                scrollY: 0,          // Явно задаём вертикальную позицию
+                scrollX: 0           // И горизонтальную, для надёжности
+            },
+            jsPDF: {
+                unit: 'mm',
+                format: 'a4',
+                orientation: 'portrait'
+            }
+        };
+
+        html2pdf()
+            .set(opt)
+            .from(element)
+            .save()
+            .then(() => {
+                element.style.display = originalDisplay;
+            })
+            .catch(err => {
+                console.error('Ошибка генерации PDF:', err);
+                element.style.display = originalDisplay;
+            });
+    };
+
 });
 
 
