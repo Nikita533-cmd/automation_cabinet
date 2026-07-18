@@ -202,6 +202,8 @@ calculation_form.addEventListener('submit', async function(e) {
     // Если форма валидна, убираем класс прошлых ошибок (на случай повторной отправки)
     this.classList.remove('was-validated');  
 
+    document.getElementsByClassName('loader-container')[0].style.display = 'flex'; 
+
     // Собираем данные формы
     const formData = new FormData(inputForm);
     const dataObject = Object.fromEntries(formData.entries());
@@ -360,6 +362,8 @@ calculation_form.addEventListener('submit', async function(e) {
     const buttonPDF = document.getElementById('save_results_btn');    
 
     buttonPDF.style.display = 'inline-block'; // показываем кнопку
+
+    document.getElementsByClassName('loader-container')[0].style.display = 'none';
 
     buttonPDF.onclick = () => {
         // Сброс скролла, чтобы html2canvas начал с (0,0)
