@@ -5,6 +5,8 @@ import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 
 
 
+let global_result = null;   //////////////////// переменная для сохранения результат 
+
 // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!СЛУШАТЕЛИ!!!!!!!!!!!!!!!!!!!!!!!!!!!
 const count_outlet = document.getElementById(`outlet`);
 const count_output = document.getElementById('count_outlet') 
@@ -271,6 +273,8 @@ calculation_form.addEventListener('submit', async function(e) {
         const result = await response.json();
         console.log('Успех:', result);
 
+        global_result = result;
+
 
 
         
@@ -337,76 +341,117 @@ calculation_form.addEventListener('submit', async function(e) {
         }
     //      console.log(`  checkbox_AVR: ${dataObject.checkbox_AVR}`);
 
-    const tbody = document.getElementById('pdf_body'); 
 
-    tbody.innerHTML = ''; // очищаем 
+
+    // ...............................................................................старая логика сбора инфомрации для pdf 
+    // const tbody = document.getElementById('pdf_body'); 
+
+    // tbody.innerHTML = ''; // очищаем 
     
-    const rows = result.BOMdata || [];
+    // const rows = result.BOMdata || [];
 
-    console.log('rows344:', rows);
+    // console.log('rows344:', rows);
 
-    rows.forEach(item => {
-        const tr = document.createElement('tr');
-        const name = item.name || '-';
-        const mass = (item.mass !== undefined && item.mass !== null) ? parseFloat(item.mass) : 0;
-        const count = (item.count !== undefined && item.count !== null) ? parseInt(item.count, 10) : 0;
+    // rows.forEach(item => {
+    //     const tr = document.createElement('tr');
+    //     const name = item.name || '-';
+    //     const mass = (item.mass !== undefined && item.mass !== null) ? parseFloat(item.mass) : 0;
+    //     const count = (item.count !== undefined && item.count !== null) ? parseInt(item.count, 10) : 0;
 
-        tr.innerHTML = `
-            <td style="word-wrap: break-word; vertical-align: top;">${name}</td>
-            <td style="text-align: right; vertical-align: top;">${mass.toFixed(2)}</td>
-            <td style="text-align: center; vertical-align: top;">${count}</td>
-        `;
-        tbody.appendChild(tr);
-    });
+    //     tr.innerHTML = `
+    //         <td style="word-wrap: break-word; vertical-align: top;">${name}</td>
+    //         <td style="text-align: right; vertical-align: top;">${mass.toFixed(2)}</td>
+    //         <td style="text-align: center; vertical-align: top;">${count}</td>
+    //     `;
+    //     tbody.appendChild(tr);
+    // });
 
-    const buttonPDF = document.getElementById('save_results_btn');    
+        const buttonPDF = document.getElementById('save_results_btn');    
 
-    buttonPDF.style.display = 'inline-block'; // показываем кнопку
+        buttonPDF.style.display = 'inline-block'; // показываем кнопку
 
-    document.getElementsByClassName('loader-container')[0].style.display = 'none';
+        document.getElementsByClassName('loader-container')[0].style.display = 'none';
 
-    buttonPDF.onclick = () => {
-        // Сброс скролла, чтобы html2canvas начал с (0,0)
-        window.scrollTo(0, 0);
+        buttonPDF.addEventListener('click', async function() {
+            try {    
+                alert(`внутри try`)
+                console.log('ваваавваваав')
+                console.log('global_result', global_result)
+                // const ADRGF = [],
+                // Отправляем на сервер
+                const response = await fetch('/users/save-calculation/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(global_result),
+            
+            
+            })
 
-        const element = document.getElementById('pdf_content');
-        if (!element) {
-            console.error('Элемент pdf_content не найден');
-            return;
+            if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`)
+            }
+
+            const result = await response.json()
+
+            // Переходим на страницу с результатами
+            if (result.redirect_url) {
+            window.location.href = result.redirect_url
+            } else {
+            alert(`Результаты успешно сохранены! ID: ${result.id}`)
+            }
+        } catch (error) {
+            console.error('Ошибка при сохранении:', error)
+            alert('Произошла ошибка при сохранении результатов')
         }
 
-        const originalDisplay = element.style.display;
-        element.style.display = 'block';
+        });
 
-        const opt = {
-            margin: [10, 10, 10, 10],
-            filename: 'specification.pdf',
-            image: { type: 'png', quality: 1 },
-            html2canvas: {
-                scale: 2,
-                useCORS: true,
-                scrollY: 0,          // Явно задаём вертикальную позицию
-                scrollX: 0           // И горизонтальную, для надёжности
-            },
-            jsPDF: {
-                unit: 'mm',
-                format: 'a4',
-                orientation: 'portrait'
-            }
-        };
 
-        html2pdf()
-            .set(opt)
-            .from(element)
-            .save()
-            .then(() => {
-                element.style.display = originalDisplay;
-            })
-            .catch(err => {
-                console.error('Ошибка генерации PDF:', err);
-                element.style.display = originalDisplay;
-            });
-    };
+    //..................................................................................... Старая генерация PDF через канвас
+    // buttonPDF.onclick = () => {
+    //     // Сброс скролла, чтобы html2canvas начал с (0,0)
+    //     window.scrollTo(0, 0);
+
+    //     const element = document.getElementById('pdf_content');
+    //     if (!element) {
+    //         console.error('Элемент pdf_content не найден');
+    //         return;
+    //     }
+
+    //     const originalDisplay = element.style.display;
+    //     element.style.display = 'block';
+
+    //     const opt = {
+    //         margin: [10, 10, 10, 10],
+    //         filename: 'specification.pdf',
+    //         image: { type: 'png', quality: 1 },
+    //         html2canvas: {
+    //             scale: 2,
+    //             useCORS: true,
+    //             scrollY: 0,          // Явно задаём вертикальную позицию
+    //             scrollX: 0           // И горизонтальную, для надёжности
+    //         },
+    //         jsPDF: {
+    //             unit: 'mm',
+    //             format: 'a4',
+    //             orientation: 'portrait'
+    //         }
+    //     };
+
+    //     html2pdf()
+    //         .set(opt)
+    //         .from(element)
+    //         .save()
+    //         .then(() => {
+    //             element.style.display = originalDisplay;
+    //         })
+    //         .catch(err => {
+    //             console.error('Ошибка генерации PDF:', err);
+    //             element.style.display = originalDisplay;
+    //         });
+    // };
 
 });
 

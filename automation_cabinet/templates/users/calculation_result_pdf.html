@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Гидравлический расчет АУП</title>
+    <style>
+        /* колонтитулы в файле */
+
+        @page {
+            size: A4;
+            margin: 2cm 1.5cm 2.5cm 1.5cm;
+            @top-center { content: element(logo-header); width:  100%;/* vertical-align: top;*/} 
+            @bottom-center { content: element(logo-down);   }
+        }
+
+        #logo-header {
+            position: running(logo-header);
+            /* margin-top: 1cm; */                       
+            /* height: 1.8cm;
+            display: flex;
+            align-items: center;
+            vertical-align: middle;
+            background: white; */
+            /* padding-right: 40px;
+            max-height: 950px; */
+        }
+        .up_kolontitul {
+            border: none;
+        }
+
+        .up_kolontitul td {
+            border: none;
+            font-size: 12px;
+        }
+
+        #logo-down {
+            width: 100%;
+            position: running(logo-down);
+            margin-left: 3cm;
+            margin-top: 1cm;
+            /* margin-left: 10cm;
+            margin-top: 1.5cm; */
+            
+            /* margin-top: 1cm; */                       
+            /* height: 1.8cm;
+            display: flex;
+            align-items: center;
+            vertical-align: middle;
+            background: white; */
+            /* padding-right: 40px;
+            max-height: 950px; */
+        }
+        .down_kolontitul {
+            border: none;
+            background: white;
+            font-size: 11px;
+            width: 100%;
+            border-collapse: separate;
+            /* margin-right: 0px; */
+            /* margin-left: 10cm; */
+            border-left: 10px solid red;
+            border-top: 10px solid red;
+            /*border-radius: 8px;*/
+            border-bottom: 1px solid white;
+            border-right: 1px solid white;
+            table-layout: fixed;
+            border-top-left-radius: 8px;
+        }
+
+        .down_kolontitul td {
+            border: none;
+            background-color: white;
+        }
+
+
+
+            /* колонтитулы в файле */
+
+
+
+        body {
+            font-family: 'Roboto','DejaVu Sans', Arial, sans-serif;
+            font-size: 20px;
+            margin-bottom: 0;
+            color: #000;
+        }
+
+        h1 {
+            color: #000;
+            font-size: 16pt;
+            /* margin-bottom: 15px; */
+            text-align: center;
+            font-weight: bold;
+        }
+
+        h2 {
+            color: #000;
+            font-size: 13pt;
+            /* margin-top: 20px;
+            margin-bottom: 10px; */
+            /* font-weight: bold; */
+            /* border-bottom: 1px solid #000; */
+            padding-bottom: 3px;
+        }
+
+        h3 {
+            color: #000;
+            font-size: 11pt;
+            margin-top: 12px;
+            margin-bottom: 6px;
+            font-weight: bold;
+        }
+
+        /* .meta-info {
+            font-size: 9pt;
+            margin-bottom: 20px;
+            text-align: right;
+            color: #666;
+        } */
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 10px 0 15px 0;
+            page-break-inside: avoid;
+            font-size: 9pt;
+        }
+
+        table th {
+            background-color: white;
+            /* background-color: #e0e0e0; */
+            border: 1px solid #000;
+            padding: 6px 4px;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        table td {
+            padding: 5px 4px;
+            border: 1px solid #000;
+            text-align: left;
+        }
+
+        table.params-table td:first-child {
+            font-weight: bold;
+            width: 50%;
+        }
+
+        table.params-table td:nth-child(2) {
+            text-align: right;
+            width: 30%;
+        }
+
+        table.params-table td:last-child {
+            text-align: left;
+            width: 20%;
+        }
+
+        /* table tbody tr:nth-child(even) {
+            background-color: #f5f5f5;
+        } */
+
+        .section {
+            margin-bottom: 20px;
+            page-break-inside: avoid;
+        }
+
+        .param-box {
+            /* padding: 8px;
+            background-color: #f0f0f0;
+            border: 1px solid #ccc; */
+            margin-bottom: 10px;
+        }
+
+        .param-label {
+            font-weight: bold;
+        }
+
+        .branch-header {
+            background-color: #d9ead3;
+            padding: 6px;
+            margin-top: 10px;
+            font-weight: bold;
+        }
+
+        .connection-header {
+            /* background-color: #fff2cc; */
+            padding: 6px;
+            margin-top: 10px;
+            font-weight: bold;
+        }
+
+        .feed-pipe-header {
+            background-color: #f4cccc;
+            padding: 6px;
+            margin-top: 10px;
+            font-weight: bold;
+        }
+
+        .hydraulic-table {
+            font-size: 8pt;
+        }
+
+        .hydraulic-table th {
+            padding: 4px 2px;
+            font-size: 8pt;
+        }
+
+        .hydraulic-table td {
+            padding: 3px 2px;
+            text-align: center;
+        }
+
+        .text-center {
+            text-align: center;
+        }
+
+        .text-right {
+            text-align: right;
+        }
+
+        .mt-10 {
+            margin-top: 10px;
+        }
+
+        .mb-10 {
+            margin-bottom: 10px;
+        }
+
+    </style>
+
+<script>
+    
+
+</script>
+            
+</head>
+<body>
+
+    <!-- БЛОК ЗАГОЛОВКА (будет в верхнем колонтитуле ВСЕХ страниц) -->
+    <div id="logo-header">
+        <table class="up_kolontitul">
+            <colgroup>
+                <col style="width: 50%;">   
+                <col style="width: 50%;">                 
+            </colgroup>
+            <tr>
+                <td>
+                    <!-- <img src="/static/images/kostrul.png" alt="Изображение" style="width: 100%; height: auto;"> -->
+                </td>
+                <td style="padding-left: 10px;">
+                    Сгенерировано на сайте:<br />
+                    https://projects.sa-biysk.ru/ayp/ <br />
+                    <!-- Дата: {{ result.created_at|date:"d.m.Y" }} -->
+                </td>
+            </tr>
+        </table>                                    
+                
+    </div>
+
+
+    <div id="logo-down">
+        <!-- <img src="/static/images/footer.png" alt="Линия" style="width: 100%; height: auto;">  -->
+        <table class="down_kolontitul">
+            <colgroup>
+                <col>
+                <col>
+                <col>
+                <col>
+            </colgroup>
+            <tbody>
+                <tr>
+                    <td style="width: 30%;">ОГРН 1022200554012</td>
+                    <td style="width: 30%;">ЗАО «ПО «Спецавтоматика»</td>
+                    <td style="width: 30%;">8-800-2008-208 доб.219</td>
+                    <td style="width: 10%;"></td>
+                </tr>
+                <tr>
+                    <td style="width: 30%;">ОКПО 03701001</td>
+                    <td style="width: 30%;">ул. Лесная, 10, г.Бийск</td>
+                    <td style="width: 30%;">sa-biysk.ru   sales@sa-biysk.ru</td>
+                    <td style="width: 10%;"></td>
+                </tr>
+                <tr>
+                    <td style="width: 30%;">ИНН/КПП 2227005952/222701001</td>
+                    <td style="width: 30%;">Алтайский край, Россия, 659316</td>
+                    <td style="width: 30%;">https://sa-biysk.ru/</td>
+                    <td style="width: 10%;"></td>
+                </tr>               
+                <tr><td></td><td></td><td></td><td></td></tr>
+                <tr><td></td><td></td><td></td><td></td></tr>
+                <tr><td></td><td></td><td></td><td></td></tr>
+            </tbody>
+        </table>                                    
+                
+    </div>
+
+
+    <!-- <div class="meta-info">
+        Дата: {{ result.created_at|date:"d.m.Y H:i:s" }}
+    </div> -->
+
+    <h1>ГИДРАВЛИЧЕСКИЙ РАСЧЕТ<br>АВТОМАТИЧЕСКОЙ УСТАНОВКИ ПОЖАРОТУШЕНИЯ</h1>
+
+    <!-- 1. Параметры помещения -->
+    <div class="section">
+        <h2>1. Параметры защищаемого помещения</h2>
+
+        <!-- {% if result.data.formValues %} -->
+        <table class="params-table">
+            <tr>
+                <td>Группа защищаемого помещения</td>
+                <!-- <td>{{ result.data.formValues.group|default:"-" }}</td>                 -->
+                <td>-</td>
+            </tr>
+            <tr>
+                <td>Вид ОТВ</td>
+                <td>
+                    <!-- {% if result.data.formValues.otv == "water" %}вода
+                    {% elif result.data.formValues.otv == "foam" %}раствор пенообразователя
+                    {% elif result.data.formValues.otv == "water_plus" %}вода со смачивателем
+                    {% else %}{{ result.data.formValues.otv }}{% endif %} -->
+                </td>
+                <td>-</td>
+            </tr>
+            <tr>
+                <td>Высота помещения</td>
+                <!-- <td>{{ result.data.formValues.height|default:"-" }}</td> -->
+                <td>м</td>
+            </tr>            
+            <tr>
+                <td>Минимальная температура воздуха</td>
+                <!-- <td>{{ result.data.formValues.temp|default:"-" }}</td> -->
+                <td>°С</td>
+            </tr>
+            <tr>
+                <td>Тип установки пожаротушения</td>
+                <td>
+                    <!-- {% if result.data.installationType == "sprinkler_water" %}Спринклерная водозаполненная
+                    {% elif result.data.installationType == "sprinkler_air" %}Спринклерная воздушная
+                    {% elif result.data.installationType == "drench" %}Дренчерная
+                    {% else %}{{ result.data.installationType }}{% endif %} -->
+                </td>
+                <td>-</td>
+            </tr>
+        </table>
+        <!-- {% endif %} -->
+    </div>
+        
+
+</body>
+</html>

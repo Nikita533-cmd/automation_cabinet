@@ -19,6 +19,8 @@ from api.serializers import AutomatSerializer, RequestSerializer, ResponseSerial
 
 from elements.models import Automat, Cabinet, ABR
 
+# from django.http import HttpResponse
+# from weasyprint import HTML
 
 class AutomatViewSet(viewsets.ModelViewSet):
     """ViewSet для работы с Automat."""
@@ -212,3 +214,4 @@ def generate(request):
     }
     serializer = ResponseSerializer(output_data)
     return Response(serializer.data, status=200)
+

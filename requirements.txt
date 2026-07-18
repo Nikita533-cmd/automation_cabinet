@@ -16,3 +16,4 @@ social-auth-core==4.5.4
 beautifulsoup4==4.12.3
 soupsieve==2.6
 Faker==12.0.1
+weasyprint==69.0
