@@ -10,5 +10,6 @@ router.register('test', AutomatViewSet)
 
 urlpatterns = [
     path('auth/', include('djoser.urls.authtoken')),
-    path('test/', generate),
+    path('test/', generate),    
+    path("users/", include("users.urls", namespace="users")),
 ]

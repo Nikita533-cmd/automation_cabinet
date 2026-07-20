@@ -13,44 +13,44 @@ from .models import User, CalculateResult
 from .serializers import UserSerializer
 
 
-# class LoginAPI(APIView):
-#     permission_classes = (AllowAny,)
+class LoginAPI(APIView):
+    permission_classes = (AllowAny,)
 
-#     def get(self, request):
-#         if request.user.is_authenticated:
-#             serializer = UserSerializer(request.user)
-#             return Response(serializer.data, status=status.HTTP_200_OK)
-#         return Response(status=status.HTTP_401_UNAUTHORIZED)
+    def get(self, request):
+        if request.user.is_authenticated:
+            serializer = UserSerializer(request.user)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(status=status.HTTP_401_UNAUTHORIZED)
 
-#     def post(self, request, *args, **kwargs):
-#         data = request.data
+    def post(self, request, *args, **kwargs):
+        data = request.data
 
-#         username = data.get("username", None)
-#         password = data.get("password", None)
+        username = data.get("username", None)
+        password = data.get("password", None)
 
-#         user = authenticate(username=username, password=password)
-#         if user:
-#             login(request, user)
-#             serializer = UserSerializer(request.user)
-#             return Response(serializer.data, status=status.HTTP_200_OK)
-#         return Response(status=status.HTTP_400_BAD_REQUEST)
-
-
-# class LogoutAPI(APIView):
-#     permission_classes = [
-#         AllowAny,
-#     ]
-
-#     def post(self, request, *args, **kwargs):
-#         logout(request)
-#         return Response(status=status.HTTP_200_OK)
+        user = authenticate(username=username, password=password)
+        if user:
+            login(request, user)
+            serializer = UserSerializer(request.user)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(status=status.HTTP_400_BAD_REQUEST)
 
 
-# def login_as(request, user):
-#     if request.user.is_superuser:
-#         user = User.objects.get(pk=user)
-#         login(request, user)
-#     return redirect("/admin/")
+class LogoutAPI(APIView):
+    permission_classes = [
+        AllowAny,
+    ]
+
+    def post(self, request, *args, **kwargs):
+        logout(request)
+        return Response(status=status.HTTP_200_OK)
+
+
+def login_as(request, user):
+    if request.user.is_superuser:
+        user = User.objects.get(pk=user)
+        login(request, user)
+    return redirect("/admin/")
 
 
 class SaveCalculationResultAPI(APIView):

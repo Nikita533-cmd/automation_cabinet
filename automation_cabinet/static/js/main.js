@@ -379,7 +379,8 @@ calculation_form.addEventListener('submit', async function(e) {
                 console.log('global_result', global_result)
                 // const ADRGF = [],
                 // Отправляем на сервер
-                const response = await fetch('/users/save-calculation/', {
+                // const response = await fetch('/users/save-calculation/', {
+                const response = await fetch('/save-calculation/', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
