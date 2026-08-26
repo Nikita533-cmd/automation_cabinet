@@ -18,4 +18,6 @@ soupsieve==2.6
 Faker==12.0.1
 pydyf==0.10.0
 weasyprint==60.2
-
+django-bootstrap5
+django-phonenumber-field[phonenumbers]
+django-allauth

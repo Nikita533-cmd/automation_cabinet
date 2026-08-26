@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+{% load django_bootstrap5 %}
+{% block content %}
+  <div class="col d-flex justify-content-center">
+    <div class="form-group" style="width: 100%; max-width: 1704px;">
+      <div class="container my-4">
+        <h4>Регистрация пользователя</h4>
+      </div>
+      <div class="card-body">
+        <!-- <form method="post">
+          {% csrf_token %}
+          {% bootstrap_form form %}
+          {% bootstrap_button button_type="submit" content="Создать" %}
+        </form> -->
+        <form method="post">
+        {% csrf_token %}
+        <div class="row">
+          <div class="col-md-6">
+            {% bootstrap_field form.last_name %}
+            {% bootstrap_field form.first_name %}
+            {% bootstrap_field form.parent_name %}
+            {% bootstrap_field form.email %}
+            {% bootstrap_field form.password1 %}
+            {% bootstrap_field form.password2 %}
+            
+          </div>
+          
+          <div class="col-md-6">
+            {% bootstrap_field form.phone %}
+            {% bootstrap_field form.city %}
+            {% bootstrap_field form.organization %}
+            {% bootstrap_field form.inn %}
+            {% bootstrap_field form.kpp %}
+            {% bootstrap_field form.job_title %}
+          </div>
+
+        </div>
+        
+        <div class="row">
+          <div class="col-md-12">
+            <div>
+              {{form.agreement_2}}
+              <label>Даю согласие на <a href="/agreement_2/" target="_blank">обработку персональных данных</a></label>
+            </div>  
+            <!-- {% bootstrap_field form.agreement_2 %} -->
+          </div>
+          <div class="col-md-12 mb-3">
+            <div>
+              {{form.agreement}}
+              <label>Подтверждаю, что ознакомился с <a href="/agreement/" target="_blank">политикой защиты и обработки персональных данных</a></label>
+            </div>         
+          </div>
+        </div>        
+        <div class="col-md-2">
+          {% bootstrap_button button_type="submit" content="Создать" button_class="btn-primary w-100" %}
+        </div>
+        
+      </form>
+            </div>
+          </div>
+        </div>
+{% endblock %}

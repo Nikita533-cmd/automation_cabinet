@@ -16,6 +16,9 @@ class UserAdmin(UserAdmin):
         "is_active",
         "is_staff",
         "is_superuser",
+        "date_joined",
+        "agreement",
+        "agreement_2",
     )
     list_filter = (
         "email",
@@ -65,3 +68,5 @@ class CalculateResultAdmin(admin.ModelAdmin):
     list_filter = ("created_at", "user")
     readonly_fields = ("id", "created_at", "data")
     search_fields = ("user__email", "user__last_name")
+
+

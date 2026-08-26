@@ -2,6 +2,7 @@ import uuid
 from django.contrib.auth.models import AbstractUser, Group
 from django.db import models
 from django.urls import reverse
+from phonenumber_field.modelfields import PhoneNumberField
 
 
 class User(AbstractUser):
@@ -16,13 +17,60 @@ class User(AbstractUser):
         max_length=100,
         null=True,
     )
+    email = models.EmailField(
+        unique=True,
+        max_length=250,
+        verbose_name='почта'
+    )
+    phone = PhoneNumberField(
+        verbose_name='телефон',
+        null=True,
+    )
+
+    organization = models.CharField(
+        "Организация",
+        max_length=100,
+        null=True,
+    )
+    inn = models.BigIntegerField(
+        "ИНН",        
+        null=True,
+    )
+
+    kpp = models.BigIntegerField(
+        "КПП",        
+        null=True,
+    )
+    city = models.CharField(
+        "Город",
+        max_length=100,
+        null=True,
+    )
+    job_title = models.CharField(
+        "Должность",
+        max_length=100,
+        null=True,
+    )
+    agreement = models.BooleanField(
+        "Подтверждение об ознакомлении с политикой защиты и обработки персональных данных",
+        default=False,        
+    )
+    agreement_2 = models.BooleanField(
+        "Согласие на обработку персональных данных",
+        default=False,        
+    )
+    # date_joined = models.DateField(
+    #     "Дата регистрации",
+    #     max_length=100,
+    #     null=True,
+    # )
 
     class Meta:
         verbose_name = "Пользователь"
         verbose_name_plural = "Пользователи"
 
     def __str__(self):
-        return "{} {}".format(self.first_name, self.last_name)
+        return self.email
 
     @property
     def fio(self):
@@ -50,6 +98,17 @@ class CalculateResult(models.Model):
     created_at = models.DateTimeField(auto_now_add=True, verbose_name="Дата создания")
     data = models.JSONField(verbose_name="Данные расчета", default=dict)
 
+    name_object = models.CharField(
+        "Наименование объекта",
+        max_length=1000,
+        null=True,
+    )
+    address_object = models.CharField(
+        "Наименование адрес",
+        max_length=1000,
+        null=True,
+    )
+
     class Meta:
         verbose_name = "Результат расчета"
         verbose_name_plural = "Результаты расчетов"
@@ -60,3 +119,5 @@ class CalculateResult(models.Model):
 
     def get_absolute_url(self):
         return reverse("users:calculation_result", args=[str(self.id)])
+    
+

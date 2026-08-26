@@ -19,8 +19,24 @@ from api.serializers import AutomatSerializer, RequestSerializer, ResponseSerial
 
 from elements.models import Automat, Cabinet, ABR
 
+from django.template.loader import render_to_string
+# from weasyprint import HTML
+from django.contrib.auth.decorators import login_required
+from users.models import CalculateResult
+from django.shortcuts import render
 # from django.http import HttpResponse
 # from weasyprint import HTML
+
+
+from django.views.generic import CreateView, ListView, UpdateView
+from django.contrib.auth import get_user_model
+from django.contrib.auth.mixins import LoginRequiredMixin
+from automation_cabinet.forms import UserForm
+from django.shortcuts import get_object_or_404, render, redirect
+from django.urls import reverse
+
+
+User = get_user_model()
 
 class AutomatViewSet(viewsets.ModelViewSet):
     """ViewSet для работы с Automat."""
@@ -215,3 +231,57 @@ def generate(request):
     serializer = ResponseSerializer(output_data)
     return Response(serializer.data, status=200)
 
+
+
+def generate_pdf(request):
+
+    if request.method == "POST":
+        # Получаем данные из формы или контекста
+
+        # Рендерим HTML шаблон
+        html_string = render_to_string("users/calculation_result_pdf.html")
+        pdf = HTML(string=html_string).write_pdf()
+        response = HttpResponse(pdf, content_type="application/pdf")
+        response["Content-Disposition"] = 'attachment; filename="specification.pdf"'
+        # Создаем PDF
+        ##  response = HttpResponse(content_type='application/pdf')
+        ##  response['Content-Disposition'] = 'attachment; filename="report.pdf"'
+
+        # Конфигурация шрифтов
+        # font_config = FontConfiguration()
+
+        # Генерируем PDF
+        # HTML(string=html_string, base_url=request.build_absolute_uri()).write_pdf(response,
+        #   font_config=font_config)
+
+        return response
+
+    # Если GET запрос, показываем страницу с кнопкой
+    # return render(request, "generate_pdf.html")
+
+
+
+
+@login_required
+def profile(request):
+    template_name = 'profile.html'
+    # username = request.kwargs.get('username')
+
+    user = request.user
+    result = CalculateResult.objects.filter(user=user)    
+    return render(request, template_name, {'result': result})
+
+class ProfileUpdateView(LoginRequiredMixin, UpdateView):
+    """Редактирование профля пользователя."""
+
+    model = User
+    form_class = UserForm
+    template_name = 'account/user.html'
+
+    def get_object(self, queryset=None):
+        """Всегда редактируем профиль текущего пользователя."""
+        return self.request.user
+
+    def get_success_url(self):
+        """Редирект на профиль текущего пользователя."""
+        return reverse('profile')

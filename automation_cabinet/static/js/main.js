@@ -36,6 +36,19 @@ count_outlet.addEventListener('change', (event) => {
 //     }
 // });
 
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+    for (const cookie of document.cookie.split(';')) {
+        const c = cookie.trim();
+        if (c.startsWith(name + '=')) {
+            cookieValue = decodeURIComponent(c.substring(name.length + 1));
+            break;
+        }
+    }
+    }
+    return cookieValue;
+}
 
 ///////////////////////////пересчет начальных вводов/////////////////////////////////
 const power_amper = document.getElementById(`power`);
@@ -373,41 +386,53 @@ calculation_form.addEventListener('submit', async function(e) {
         document.getElementsByClassName('loader-container')[0].style.display = 'none';
 
         buttonPDF.addEventListener('click', async function() {
-            try {    
-                alert(`внутри try`)
-                console.log('ваваавваваав')
+            try {                  
+
+                // alert(`внутри try`)
+                // console.log('ваваавваваав')
                 console.log('global_result', global_result)
                 // const ADRGF = [],
                 // Отправляем на сервер
                 // const response = await fetch('/users/save-calculation/', {
-                const response = await fetch('/save-calculation/', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(global_result),
-            
-            
-            })
 
-            if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`)
+                const response = await fetch('generate-pdf/', {
+                        method: 'POST',
+                        headers: {
+                            'X-CSRFToken': getCookie('csrftoken'),
+                            // 'X-CSRFToken': '{{ csrf_token }}',
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(global_result)
+                    })
+
+                
+                if (!response.ok) {
+                    throw new Error(`Ошибка сервера! Статус: ${response.status}`);
+                }
+
+                
+                const blob = await response.blob();                
+                const url = window.URL.createObjectURL(blob);              
+                
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'specification.pdf'; 
+                document.body.appendChild(a);                
+                a.click();                 
+                
+                window.URL.revokeObjectURL(url);
+                a.remove();
+                
+            } catch (error) {
+                    console.error('Ошибка при сохранении:', error)
+                    alert('Произошла ошибка при сохранении результатов')
             }
-
-            const result = await response.json()
-
-            // Переходим на страницу с результатами
-            if (result.redirect_url) {
-            window.location.href = result.redirect_url
-            } else {
-            alert(`Результаты успешно сохранены! ID: ${result.id}`)
-            }
-        } catch (error) {
-            console.error('Ошибка при сохранении:', error)
-            alert('Произошла ошибка при сохранении результатов')
-        }
 
         });
+
+
+
+
 
 
     //..................................................................................... Старая генерация PDF через канвас

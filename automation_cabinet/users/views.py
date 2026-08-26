@@ -8,10 +8,18 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from weasyprint import HTML
 import tempfile
-
-from .models import User, CalculateResult
+from django.utils.encoding import escape_uri_path
+from .models import User, CalculateResult, MPNYResult, IPAResult
 from .serializers import UserSerializer
+from django.conf import settings
+from django.core.mail import EmailMessage
+from django.http import JsonResponse
+import os
+from dotenv import load_dotenv
+from pathlib import Path
+BASE_DIR = Path(__file__).resolve().parent.parent
 
+load_dotenv(BASE_DIR / ".env")
 
 class LoginAPI(APIView):
     permission_classes = (AllowAny,)
@@ -58,12 +66,19 @@ class SaveCalculationResultAPI(APIView):
 
     def post(self, request, *args, **kwargs):
         data = request.data
-
+        print('user:', request.user)
+        print('user:', request.user.is_authenticated)
+        print('data:717171717171771717', data)
         # Создаем запись с результатами расчета
         calculate_result = CalculateResult.objects.create(
             user=request.user if request.user.is_authenticated else None,
-            data=data
+            data=data,
+            name_object=data['name_object'],
+            address_object=data['address_object'],
         )
+        print
+        print('user:', request.user)
+        print('user:', request.user.is_authenticated)
 
         return Response(
             {
@@ -107,3 +122,56 @@ def calculation_result_pdf(request, result_id):
     response['Content-Disposition'] = f'attachment; filename="{filename}"'
 
     return response
+
+# def get_pdf(request, result_id):
+#     """Экспорт результатов расчета в PDF"""
+#     result = get_object_or_404(MPNYResult, id=result_id)
+
+#     # Рендерим HTML шаблон
+#     # html_string = render_to_string('users/calculation_result_pdf.html', {'result': result})
+#     html_string = render_to_string("users/mpnu_pdf.html", result.data)
+#     pdf = HTML(string=html_string, base_url=request.build_absolute_uri()).write_pdf()
+#     response = HttpResponse(pdf, content_type='application/pdf')
+#     filename = f"{result.name}.pdf"
+#     response['Content-Disposition'] = f'attachment; filename="{escape_uri_path(filename)}"'
+#     return response
+
+# def get_pdf_ipa(request, result_id):
+#     """Экспорт результатов расчета в PDF"""
+#     result = get_object_or_404(IPAResult, id=result_id)
+#     html_string = render_to_string("users/ipa_pdf.html", result.data)
+#     pdf = HTML(string=html_string, base_url=request.build_absolute_uri()).write_pdf()
+#     response = HttpResponse(pdf, content_type="application/pdf")
+#     return response
+# from django.core.mail import EmailMultiAlternatives
+# def get_tkp_mpny(request, result_id):
+#     """Экспорт результатов расчета в PDF"""
+#     result = get_object_or_404(MPNYResult, id=result_id)
+
+#     # Рендерим HTML шаблон
+#     # html_string = render_to_string('users/calculation_result_pdf.html', {'result': result})
+#     html_string = render_to_string("users/mpnu_pdf.html", result.data)
+#     pdf = HTML(string=html_string, base_url=request.build_absolute_uri()).write_pdf()
+#     response = HttpResponse(pdf, content_type='application/pdf')
+#     filename = f"{result.name}.pdf"
+#     response['Content-Disposition'] = f'attachment; filename="{escape_uri_path(filename)}"'
+#     email = EmailMessage(
+#         subject=f"PDF {result.name}",
+#         body=f"Добрый день! Направляю Вам технические параметры для подготовки технико-коммерческого предложения (ТКП) на изготовление изделия. Файл с результатами предварительного расчета со всеми необходимыми характеристиками находится во вложении к этому письму (в формате PDF). С уважением, {request.user}",
+#         from_email=os.getenv('from_email', 'info@sa-biysk.ru'),
+#         to=os.getenv("to_email").split(', '),
+#         reply_to=[request.user.email]
+#     )
+#     print ('email.from_email', email.from_email)
+#     # # html = render_to_string('test.html')
+#     # email = EmailMultiAlternatives(
+#     #             subject=f"PDF {result.name}",
+#     #             body=html,
+#     #             from_email=os.getenv('from_email', 'info@sa-biysk.ru'),
+#     #             to=os.getenv("to_email").split(', '),
+#     #             reply_to=[request.user.email]
+#     #         )
+#     # email.attach_alternative(html, "text/html")
+#     email.attach(f"{result.name}.pdf", pdf, "application/pdf")
+#     email.send(fail_silently=False)
+#     return JsonResponse({'message': "Сообщение отправлено"}, status=201)

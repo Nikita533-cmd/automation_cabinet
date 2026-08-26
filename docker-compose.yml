@@ -6,3 +6,9 @@ services:
     ports:
       - 8000:8000
     env_file: .env
+    volumes:      
+      - ./automation_cabinet:/app
+      - static_volume:/app/staticfiles
+
+volumes:
+  static_volume:

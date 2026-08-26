@@ -20,12 +20,22 @@ from elements import urls
 from django.conf import settings
 from django.conf.urls.static import static
 
+from api import views
+
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    path('', include(urls)),
+    path('admin/', admin.site.urls),    
     path('api/', include('api.urls')),
-    # path("users/", include("users.urls", namespace="users")),           
+    path('generate-pdf/', views.generate_pdf, name='generate_pdf'), 
+    path("accounts/", include("allauth.urls")),
+    path('profile/', views.profile, name='profile'),
+    path('', include(urls)),
+    path('edit_profile/', views.ProfileUpdateView.as_view(), name='edit_profile',),
+        
+            
 ]
+
 
 if settings.DEBUG:
     urlpatterns += static(settings.STATIC_URL, document_root=settings.STATICFILES_DIRS[0])
+    urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

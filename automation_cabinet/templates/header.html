@@ -1,0 +1,31 @@
+{% load static %}
+<header style="height: 96px; width: 100%;">
+  <div class="d-flex flex-wrap align-items-center justify-content-end" style="height: 100%;">   
+      <div class="container-header d-flex align-items-center justify-content-between px-4">
+        <div class="header-title">
+          <span class="fw-bold text-dark fs-5">Конфигуратор шкафов</span>
+        </div>
+        <div class="button_login" style="margin-right: 30px;">
+        {% if user.is_authenticated %}
+            <div class="btn-group" role="group" aria-label="Basic outlined example">
+              <button type="button" class="btn btn-outline-dark"><a class="text-decoration-none text-reset"
+                  href="{% url 'profile'%}">{{ user.username }}</a></button>
+              <form method="post" action="{% url 'account_logout' %}" class="d-inline">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-outline-dark">Выйти</button>
+              </form>
+            </div>
+          {% else %}
+            <div class="btn-group" role="group" aria-label="Basic outlined example">
+              <button type="button" class="btn btn-outline-dark"><a class="text-decoration-none text-reset"
+                  href="{% url 'account_login' %}">Войти</a></button>
+              <button type="button" class="btn btn-outline-dark"><a class="text-decoration-none text-reset"
+                  href="{% url 'account_signup' %}">Регистрация</a></button>
+            </div>
+          {% endif %}
+      </div>
+      </div>
+      
+    
+  </div>
+</header>

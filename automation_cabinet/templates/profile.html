@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% block title %}
+  Страница пользователя {{ profile.username }}
+{% endblock %}
+{% block content %}
+  <h4 class="container my-4">
+    <div class="profile";>
+      <a>Проекты пользователя</a>/
+      <a href="{% url 'edit_profile' %}" style="color:#8b8b8b">Редактировать профиль</a>
+    </div>
+    
+  </h4>  
+  
+    <!-- <h5>Подбор МПНУ</h5> -->
+    <table class="table" style="max-width: 1704px; margin: 0 auto; margin-top: 30px;">
+      <colgroup>
+        <col style="width: 25%;">
+        <col style="width: 30%;">
+        <col style="width: 30%;">
+        <col style="width: 15%;">       
+      </colgroup>
+        <tr>
+          <td colspan="4" style="color: #0F1379; font-size: 20px;  font-weight: bold; text-align: left;">
+            Подбор МПНУ
+          </td>
+        </tr>     
+        {% for post in mpny %}
+        <tr>
+          <td style="color: #232323; font-size: 16px;  font-weight: bold;">
+            {{ post.name }}
+          </td>
+          <td colspan="2" style="color: #232323; font-size: 16px;  font-weight: bold;">Наименование объекта: {{ post.name_object }}</td>
+          <td><a href="{% url 'auth:calculation-result_mpny' post.id %}" style="font-weight: bold; font-size: 16px; text-decoration: none; color: #0F1379;">Скачать файл</a></td>
+        </tr>
+        <tr >
+          <td style="color: #232323; font-size: 16px; font-weight: bold;">
+            Дата создания: {{ post.created_at }}
+          </td>
+          <td colspan="2" style="color: #232323; font-size: 16px;  font-weight: bold;">Адрес объекта: {{ post.address_object }}</td>                            
+          <td>
+            <button
+              type="button" id="b2_tkp"
+              data-url="{% url 'auth:TKP_mpny' post.id %}"
+              style="font-weight: bold; font-size: 16px; text-decoration: none; color: #0F1379; background: none; border: none; cursor: pointer; padding: 0;">
+              Запросить ТКП
+            </button>
+          </td>
+        </tr>
+        <tr style="background-color: #F3F2F8;"><td colspan="4"></td></tr>        
+        {% endfor %}
+        </table>   
+        
+  </table>
+        
+{% endblock %}

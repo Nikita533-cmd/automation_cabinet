@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% load django_bootstrap5 %}
+{% block title %}
+  Редактирование профиля
+{% endblock %}
+{% block content %}
+  <div style="max-width: 1704px; margin: 0 auto;">
+    <div class="form-group">
+      <h4 class="container my-4">
+        <div class="profile";>
+          <a href="{% url 'profile' %}" style="color:#8b8b8b">Проекты пользователя</a>/
+          
+          <a>Редактирование профиля - {{ request.user.username }}</a>
+        </div>
+        
+      </h4>
+      
+      <div class="card-body">
+        <form method="post">
+          {% csrf_token %}
+          {% bootstrap_form form %}
+          {% bootstrap_button button_type="submit" content="Отправить" %}
+        </form>
+      </div>
+    </div>
+  </div>
+{% endblock %}

@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load allauth %}
+{% block head_title %}
+    {% trans "Verify Your Email Address" %}
+{% endblock head_title %}
+{% block content %}
+    <div class="col d-flex justify-content-center">
+        <div class="form-group" style="width: 40rem;">
+            <div class="container my-4">
+                {% element h1 %}
+                    {% trans "Verify Your Email Address" %}
+                {% endelement %}
+            </div>
+            <div class="card-body" style="text-align: justify;">
+                {% element p %}
+                    {% blocktrans %}На указанный Вами адрес электронной почты отправлено письмо со ссылкой для подтверждения регистрации. Пожалуйста, перейдите по ней, чтобы завершить процесс регистрации. Если в течение нескольких минут письмо с подтверждением не поступит, пожалуйста, свяжитесь с нами.{% endblocktrans %}
+                {% endelement %}
+            </div>
+                
+        </div>
+    </div>
+{% endblock content %}
