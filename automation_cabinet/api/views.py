@@ -51,8 +51,9 @@ class VRY():
         self.i = power
         self.getScaf()
         self.generate_input()
-        self.generate_output()
         self.getABR()
+        self.generate_output()
+        
     @property
     def BOMdata(self):
         listdata ={}
@@ -84,27 +85,42 @@ class VRY():
 
     def getScaf(self):
         a = Automat.objects.filter(i__gte=self.i).order_by('i').first()
+        Y1=a.A*1.5
         B_up = a.B*self.count*1.3
         B_down = self.otst*2
+        Y3 = 0
         for e in self.outs:
             a = Automat.objects.filter(i__gte=e['i']).order_by('i').first()
             B_down = B_down + a.B
-        self.scaf = Cabinet.objects.filter(B_panel__gte=B_down).order_by('mass').first()
+            Y3 = a.A*2
+        Y2=0
+        if self.checkbox_AVR:
+            avr = ABR.objects.filter(i__gte=self.i).order_by('i').first()
+            Y2= avr.A*1
+        print(Y1+Y2+Y3)
+        self.scaf = Cabinet.objects.filter(A_panel__gte=Y1+Y2+Y3, B_panel__gte=B_down/2).order_by('mass').first()
         
 
         
     def getABR(self):
         if self.checkbox_AVR:
+            
             avr = ABR.objects.filter(i__gte=self.i).order_by('i').first()
-            self.elements.append({'path': avr.Path, 'X': self.otst, 'Y': avr.B*1.5, 'Z': 0})
+            Y3 = self.Y2 - avr.A/2
+            print(Y3, self.Y2, avr.A/2)
+            self.elements.append({'path': avr.Path, 'X': self.scaf.B_panel/2, 'Y': Y3, 'Z': 0})
+            self.elements_obj.append(avr)
+            self.Y2 = Y3 - avr.A/2 -self.otst
+            print(Y3, self.Y2 )
             return True
         return False
     
     def generate_input(self):
         Phase=3
+
         if self.voltage == 220:
             Phase=1
-        a = Automat.objects.filter(i__gte=self.i).filter(Phase__gte=Phase).order_by('i').first()
+        a = Automat.objects.filter(Phase=Phase, i__gte=self.i).order_by('i').first()
         if self.count == 2:
             self.B_min = a.B*2*1.3
             # self.scaf = Cabinet.objects.filter(B_panel__gte=self.B_min).order_by('mass').first()
@@ -115,12 +131,12 @@ class VRY():
             self.elements.append({'path': a.Path, 'X': (self.scaf.B_panel - self.otst - a.B/2), 'Y': Y, 'Z': 0})
             self.elements_obj.append(a)
             self.elements_obj.append(a)
-            self.Y2 = Y - a.A*2
+            self.Y2 = Y - a.A
             return True
         self.B_min = a.B*1.3
         # self.scaf = Cabinet.objects.filter(B__gte=self.B_min).order_by('mass').first()
         Y = self.scaf.A - a.A
-        self.Y2 = Y - a.A*1.5
+        self.Y2 = Y - a.A*2
         self.elements.append({'path': a.Path, 'X': (a.B/2 + self.otst), 'Y': Y, 'Z': 0})
         self.elements_obj.append(self.scaf)
         self.elements_obj.append(a)
@@ -136,8 +152,9 @@ class VRY():
             Phase=3
             if e['voltage'] == 220:
                 Phase=1
-            a = Automat.objects.filter(i__gte=e['i']).filter(Phase__gte=Phase).order_by('i').first()
-            bi = a.B/2
+            print('e[voltage]', e['voltage'])
+            a = Automat.objects.filter(Phase=Phase, i__gte=e['i']).order_by('i').first()
+            
             if i==0:
                 X = a.B/2 + self.otst
             else:
@@ -148,6 +165,7 @@ class VRY():
             self.elements.append({'path': a.Path, 'X': X, 'Y': self.Y2, 'Z': 0})
             self.elements_obj.append(a)
             i = i + 1
+            bi = a.B/2
             # if self.Y2-a.A*1.5:
             #     A = self.scaf.A_panel+ abs(self.Y2-a.A*1.5)
             #     self.scaf = Cabinet.objects.filter(A_panel__gte=A).order_by('mass').first()
