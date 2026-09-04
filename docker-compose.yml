@@ -9,6 +9,11 @@ services:
     volumes:      
       - ./automation_cabinet:/app
       - static_volume:/app/staticfiles
-
+  postgres:
+    image: postgres:13
+    env_file: .env
+    volumes:
+      - postgres-volume:/var/lib/postgresql/data
 volumes:
   static_volume:
+  postgres-volume:
