@@ -1,9 +1,9 @@
 import * as THREE from 'three';
-import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 
 
-
+alert("Я обновляюсь");
 
 let global_result = null;   //////////////////// переменная для сохранения результат 
 
@@ -210,7 +210,7 @@ calculation_form.addEventListener('submit', async function(e) {
             // Ставим на него фокус
             firstInvalidElement.focus();
         }
-        alert("Подбор не выполнен! Пожалуйста, проверьте заполнение полей на странице. Некоторые обязательные ячейки не заполнены или содержат некорректные значения (выделены красным).");
+        alert("adasdasdПодбор не выполнен! Пожалуйста, проверьте заполнение полей на странице. Некоторые обязательные ячейки не заполнены или содержат некорректные значения (выделены красным).");
         return; // Останавливаем выполнение, fetch не вызовется
     }
 
