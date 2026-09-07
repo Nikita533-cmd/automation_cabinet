@@ -2,40 +2,28 @@
 В системе должнен быть установлены Docker актуальной версии!
 
 
-<!-- ### 1. Клонируем себе репозиторий
+### 1.Собираем и запускаем проект
 ```bash
-git clone git@github.com:SamoilenkoLev/spec-auto.git
-cd spec-auto
-``` -->
-
-### 2. Линтим docker-compose.yml с docker-compose.dev.yml
-
-```bash
-ln -s etc/docker-compose.yaml ./
+docker compose up -d
 ```
-
-### 3.Собираем и запускаем проект
+### 2.Заполняем БД из дампа dump1.sql дамп можно перезаписать но лучше изменить название
 ```bash
-./run.sh start
-```
-
-### 4. Миграции
-```bash
-
-### 4.1 Заполнение БД
-```bash
-
 docker exec -i automation_cabinet-postgres-1 psql -U postgres -d postgres < dump1.sql
 ```
-
-### 5.Запуск дев сервера
+### Чтобы остановить контейнеры, нужно выполнить
 ```bash
-./run.sh runserver
+docker compose stop
+```
+### Чтобы удалить контейнеры, нужно выполнить
+```bash
+docker compose down
+```
+### Чтобы провести миграции в бд 
+```bash
+docker exec -it automation_cabinet-automation_cabinet-1 python manage.py migrate
 ```
 
-Чтобы остановить контейнеры, нужно выполнить
+### Если вы добавили что-то в бд то сохраните дамп:
 ```bash
-./run.sh stop
-```
-Если вы добавили что-то в бд то сохраните дамп:
 docker exec -i automation_cabinet-postgres-1 pg_dump -U postgres -d postgres > dump1.sql
+```
