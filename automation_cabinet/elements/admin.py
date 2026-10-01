@@ -3,13 +3,14 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 
-from .models import Fiksator, Automat, Cabinet, Contactor, ABR
+from .models import Fiksator, Automat, Cabinet, Contactor, ABR, Counter
 
 admin.site.register(Fiksator)
 admin.site.register(Automat)
 admin.site.register(Cabinet)
 admin.site.register(Contactor)
 admin.site.register(ABR)
+admin.site.register(Counter)
 # @admin.register(Fiksator)
 # class TagAdmin(admin.ModelAdmin):
 #     list_display = ('name',)

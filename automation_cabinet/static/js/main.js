@@ -3,7 +3,7 @@ import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 
 
-alert("Я обновляюсь");
+// alert("Я обновляюсь");
 
 let global_result = null;   //////////////////// переменная для сохранения результат 
 
@@ -561,39 +561,46 @@ function initLoaders() {
 }
 
 function loadModel(A,B,C,path) {
+    return new Promise((resolve, reject) => {
+        GLB_LOADER = new GLTFLoader();
+        GLB_LOADER.load(
+            `static/models/${path}`,
+            function(gltf) {
+                const model = gltf.scene;
+                model.position.set(-B/2, -A/2, -C/2);
+                model.scale.set(1, 1, 1);
+                SCENE.add(model);
+                console.log('Модель загружена!');
+                MAIN_MODEL = model;
+                // Добавляем оси к модели
+                // addAxesToModel(model, 0.5); // Длина осей — 5 единиц
+                // Ищем дверцу и делаем её прозрачной
+                model.traverse(child => {
 
-    GLB_LOADER = new GLTFLoader();
-    GLB_LOADER.load(
-        `static/models/${path}`,
-        function(gltf) {
-            const model = gltf.scene;
-            model.position.set(-B/2, -A/2, -C/2);
-            model.scale.set(1, 1, 1);
-            SCENE.add(model);
-            console.log('Модель загружена!');
-            MAIN_MODEL = model;
-            // Добавляем оси к модели
-            // addAxesToModel(model, 0.5); // Длина осей — 5 единиц
-            // Ищем дверцу и делаем её прозрачной
-            model.traverse(child => {
+                    const type = child.type || 'Unknown';
+                    const name = child.name || 'Без имени';
+                    
+                    // console.log(`Тип: ${type}, Имя: "${name}"`);
 
-                const type = child.type || 'Unknown';
-                const name = child.name || 'Без имени';
+                    if (child.name === 'Compound7') {
+
                 
-                // console.log(`Тип: ${type}, Имя: "${name}"`);
+                        child.visible = false;
+                    //     // Включаем прозрачность
+                    //     child.material.transparent = true;
+                    //     // Устанавливаем уровень прозрачности (0 — полностью прозрачно, 1 — непрозрачно)
+                    //     child.material.opacity = 0.3;
+                    // // console.log('Дверца стала прозрачной');
+                    }
+                });
+                resolve(model);
+            },
+            function(xhr) { console.log((xhr.loaded / xhr.total * 100) + '%'); },
+            function(error) { console.error(error); }
+        );
+    // console.log("MAIN_MODEL.position", MAIN_MODEL.position)
+    });
 
-                if (child.name === 'mesh_0') {
-                    // Включаем прозрачность
-                    child.material.transparent = true;
-                    // Устанавливаем уровень прозрачности (0 — полностью прозрачно, 1 — непрозрачно)
-                    child.material.opacity = 0.3;
-                // console.log('Дверца стала прозрачной');
-                }
-            });
-        },
-        function(xhr) { console.log((xhr.loaded / xhr.total * 100) + '%'); },
-        function(error) { console.error(error); }
-    );
     
 }
 
@@ -643,16 +650,19 @@ function render() {
 function add_model(X, Y, Z, path) {     
 
     const loader = new GLTFLoader();
+    
     loader.load(
     `static/models/${path}`, // Путь к новой модели
     // `static/models/16A.glb`, // Путь к новой модели
+    
     function(gltf) {
-        const newModel = gltf.scene;      
+        const newModel = gltf.scene;
+        // alert (MAIN_MODEL.position)      
         newModel.position.copy(MAIN_MODEL.position);
         // newModel.rotation.x = THREE.MathUtils.degToRad(90);
         newModel.position.x += X;   // смещение по х
         newModel.position.y += Y;
-        newModel.position.z += 13.9/1000;
+        newModel.position.z += Z/1000;
         console.log('X',X);
         console.log('Y',Y);
         console.log('Z',Z);

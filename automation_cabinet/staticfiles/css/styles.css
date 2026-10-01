@@ -1,0 +1,142 @@
+body {
+        font-family: Arial, Helvetica, sans-serif;
+        font-size: 14px;
+        max-width: 1704px; 
+        margin: 0 auto;           
+    }
+    .form{
+        background: #F3F2F8;
+        display: flex;
+        flex-direction: row;        
+        max-width: 1704px;        
+        border-radius: 30px;
+        gap: 20px; /* промежуток между колонками */
+        padding: 20px;        
+        min-height: 600px;
+        font-size: 15px;
+        margin-top: 20px;
+    }
+    .container-header{
+        background: #F3F2F8;
+        height: 96px;
+        width: 100%;       
+        max-width: 1704px;        
+        border-radius: 30px;
+        margin: 0 auto;
+        /* gap: 20px; промежуток между колонками */
+        /* padding: 20px;         */
+        /* min-height: 600px; */
+        /* font-size: 15px; */
+    }
+    h1{
+        font-size: 30px;        
+    }
+    h2{
+        font-size: 20px;
+    }
+    h3{
+        font-size: 15px;
+    }
+    h1, h2, h3 {
+        font-weight: 700;
+        color: #000000;
+        max-width: 1704px;
+        
+    }
+    #checkbox_AVR{
+        margin-left: auto; /* отодвинет чекбокс максимально вправо */
+        width: 18px; /* ширина чекбокса */
+        height: 18px; /* высота чекбокса */
+        cursor: pointer; /* курсор при наведении */
+        accent-color: #000000;
+    }
+    #input_form, .window {
+        background: #FFFFFF;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        max-width: 1704px;
+        border-radius: 30px;
+        width: 50%; /* Занимает половину ширины container-gray */
+        box-sizing: border-box; /* Включаем padding и border в ширину */
+        padding: 30px;
+    }
+    .initial_data{
+        width: 100%;
+    }
+    .parameters{
+        width: 100%;
+        vertical-align: middle;
+    }    
+    #okno{
+        width: 100%; 
+        height: 100%; 
+    }
+    .form-control{
+        width: 100%;
+        font-weight: 700;
+        text-align: right;
+        /* margin-right: 20px; */
+    }
+    #row1, #row2, #row3, #row4 {
+        height: 30px;
+
+    }
+    canvas{
+        width: 100%;
+        /* height: 100%; */
+    }
+
+    .loader-container {
+      display: none;       
+      
+      position: fixed; /* на весь экран */
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 9999; /* Переносим z-index сюда, чтобы перекрыть ВСЮ страницу */
+
+      
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      
+      /* Интерактив */
+      pointer-events: auto;     
+      cursor: wait;     
+      background: rgba(255, 255, 255, 0.8); /* Чуть плотнее фон, чтобы контент под ним был менее активным визуально */
+    }
+
+    .loader {        
+        width: 11em; 
+        height: 11em;    
+        border: 1.2em solid transparent;     
+        border-top: 1.2em solid #000000;  
+        /* border-top: 1.2em solid #010105;      */
+        border-radius: 50%;
+        animation: load3 1.4s infinite linear;
+        margin-bottom: 20px; /* Отступ между спиннером и текстом h1 */
+    }
+    @-webkit-keyframes load3 {
+    0% {
+      -webkit-transform: rotate(0deg);
+      transform: rotate(0deg);
+    }
+    100% {
+      -webkit-transform: rotate(360deg);
+      transform: rotate(360deg);
+    }
+  }
+  @keyframes load3 {
+    0% {
+      -webkit-transform: rotate(0deg);
+      transform: rotate(0deg);
+    }
+    100% {
+      -webkit-transform: rotate(360deg);
+      transform: rotate(360deg);
+    }
+  }

@@ -16,20 +16,39 @@ class Fiksator(models.Model):
     def __str__(self):
         return self.name
 
+class Counter(models.Model):
+    """Модель счетчика."""
+    name = models.CharField('Название', max_length=150)
+    A = models.FloatField('Высота')
+    B = models.FloatField('Ширина')
+    C = models.FloatField('Глубина')    
+    Phase = models.IntegerField('Количество фаз')
+    mass = models.FloatField('Масса, кг')
+    Path = models.TextField('Путь к файлу')
+    price = models.FloatField('Цена, руб')    
+    
+    
+    class Meta:
+        ordering = ('name',)
+        verbose_name = 'Модель счетчика'
+        verbose_name_plural = 'Модели счетчиков'
 
+    def __str__(self):
+        return self.name
 
 class Automat(models.Model):
     """Модель автомата."""
-    mass = models.FloatField('Масса, кг')
-    price = models.FloatField('Цена, руб')
     name = models.CharField('Название', max_length=150)
-    i = models.FloatField('Сила тока')
-    Phase = models.IntegerField('Количество фаз')
     A = models.FloatField('Высота')
     B = models.FloatField('Ширина')
     C = models.FloatField('Глубина')
+    i = models.FloatField('Сила тока')
+    # Phase = models.IntegerField('Количество фаз')
+    mass = models.FloatField('Масса, кг')
     Path = models.TextField('Путь к файлу')
+    price = models.FloatField('Цена, руб')    
     fiksator = models.ForeignKey(Fiksator, on_delete = models.CASCADE)
+
     class Meta:
         ordering = ('i',)
         verbose_name = 'Модель автомата'
@@ -60,8 +79,6 @@ class Contactor(models.Model):
 
 class Cabinet(models.Model):
     """Модель шкафа."""
-    mass = models.FloatField('Масса, кг')
-    price = models.FloatField('Цена, руб')
     name = models.CharField('Название', max_length=150)
     A = models.FloatField('Высота')
     B = models.FloatField('Ширина')
@@ -70,6 +87,18 @@ class Cabinet(models.Model):
     B_panel = models.FloatField('Ширина панели')
     C_panel = models.FloatField('Глубина панели')
     Path = models.TextField('Путь к файлу')
+    Visibility = models.CharField('Видимость дверцы', max_length=150, null=True, blank=True)
+    price = models.FloatField('Цена, руб')
+    mass = models.FloatField('Масса, кг')
+    IP = models.FloatField('Класс защиты', null=True, blank=True) 
+    
+    
+    
+    
+    
+    
+    
+    
     class Meta:
         ordering = ('mass',)
         verbose_name = 'Модель шкафа'
@@ -80,15 +109,17 @@ class Cabinet(models.Model):
 
 class ABR(models.Model):
     """Модель АВР."""
-    mass = models.FloatField('Масса, кг')
-    price = models.FloatField('Цена, руб')
     name = models.CharField('Название', max_length=150)
-    A = models.FloatField('Высота')
     B = models.FloatField('Ширина')
+    A = models.FloatField('Высота')
     C = models.FloatField('Глубина')
-    Path = models.TextField('Путь к файлу')
-    fiksator = models.ForeignKey(Fiksator, on_delete = models.CASCADE)
     i = models.FloatField('Сила тока')
+    Phase = models.IntegerField('Количество фаз')
+    mass = models.FloatField('Масса, кг')
+    Path = models.TextField('Путь к файлу')
+    price = models.FloatField('Цена, руб')    
+    fiksator = models.ForeignKey(Fiksator, on_delete = models.CASCADE)
+    
     class Meta:
         ordering = ('i',)
         verbose_name = 'Модель АВР'

@@ -21,4 +21,4 @@ weasyprint==60.2
 django-bootstrap5
 django-phonenumber-field[phonenumbers]
 django-allauth
-psycopg2==2.9.5
+psycopg2
