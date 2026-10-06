@@ -1,0 +1,82 @@
+GET http://127.0.0.1:8000/api/v1/posts/
+Authorization: Token 5ec3f342827ef08cb1f42b3929cff65485e962b8
+
+###
+GET http://127.0.0.1:8000/api/v1/posts/3/comments/
+Authorization: Token 5ec3f342827ef08cb1f42b3929cff65485e962b8
+
+###
+POST http://127.0.0.1:8000/api/v1/posts/3/comments/
+Authorization: Token 5ec3f342827ef08cb1f42b3929cff65485e962b8
+Content-Type: application/json
+
+{
+    "text": "Вечером собрались в"
+} 
+
+###
+GET http://127.0.0.1:8000/api/v1/groups/
+Authorization: Token 5ec3f342827ef08cb1f42b3929cff65485e962b8
+###
+POST http://127.0.0.1:8000/api/v1/posts/
+Authorization: Token 5ec3f342827ef08cb1f42b3929cff65485e962b8
+Content-Type: application/json
+
+{
+    "text": "Вечером собрались в редакции «Русской мысли», чтобы поговорить о народном театре. Проект Шехтеля всем нравится.",
+    "group": 1
+} 
+
+###
+POST http://127.0.0.1:8000/api/v1/jwt/create/
+Content-Type: application/json
+
+{
+  "username": "bob",
+  "password": "bob"
+}
+###
+POST http://127.0.0.1:8000/api/v1/jwt/create/
+Content-Type: application/json
+
+{
+  "username": "tot",
+  "password": "kikika1999"
+}
+###
+GET http://127.0.0.1:8000/api/v1/jwt/
+
+###
+GET http://127.0.0.1:8000/api/v1/posts/1/comments/
+Authorization: Token eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzcxMTc1OTU3LCJpYXQiOjE3NzEwODk1NTcsImp0aSI6IjIyNTVmZTRlYmQyMjRkYjk5OWFiMjgwZjk4NTE1NGE4IiwidXNlcl9pZCI6MX0.IgBT9415NjMcNgtV8BjAZIxbqZccmdWMI5sLceFrfp4
+
+
+###
+POST http://127.0.0.1:8000/api/v1/follow/
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzcxMTc1OTU3LCJpYXQiOjE3NzEwODk1NTcsImp0aSI6IjIyNTVmZTRlYmQyMjRkYjk5OWFiMjgwZjk4NTE1NGE4IiwidXNlcl9pZCI6MX0.IgBT9415NjMcNgtV8BjAZIxbqZccmdWMI5sLceFrfp4
+
+{
+    "following": "tot"
+}
+
+###
+GET http://127.0.0.1:8000//api/v1/follow/
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzcxMTc1OTU3LCJpYXQiOjE3NzEwODk1NTcsImp0aSI6IjIyNTVmZTRlYmQyMjRkYjk5OWFiMjgwZjk4NTE1NGE4IiwidXNlcl9pZCI6MX0.IgBT9415NjMcNgtV8BjAZIxbqZccmdWMI5sLceFrfp4
+
+###
+GET http://127.0.0.1:8000//api/v1/follow/
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzcxMjE1NjIyLCJpYXQiOjE3NzExMjkyMjIsImp0aSI6IjFhYzJiOWI1NTg2YzRkODNiYzhlMzc3YjM2OGM5MzY0IiwidXNlcl9pZCI6Mn0.IwyStLB7nYWnWA7IpVov8OeXlFLlPFi8ZmM8PcYslig
+###
+POST http://127.0.0.1:8000/api/test/
+Content-Type: application/json
+
+{
+    "outs":[{"name":"power_outlet_1","i":"2","voltage":"220"},{"name":"power_outlet_kvt_1","i":"0.44","voltage":"220"},{"name":"power_outlet_2","i":"2","voltage":"220"},{"name":"power_outlet_kvt_2","i":"0.44","voltage":"380"}],
+    "power":"4",
+    "power_kvt":"0.88",
+    "count":"1",
+    "outlet":"2",
+    "voltage":"220",
+    "checkbox_AVR":"false"
+}

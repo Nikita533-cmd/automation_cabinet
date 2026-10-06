@@ -95,4 +95,55 @@ class ABR(models.Model):
         verbose_name_plural = 'Модели АВРов'
 
     def __str__(self):
-        return self.name  
+        return self.name 
+
+from django.contrib.auth.models import AbstractUser
+from django.db import models
+from django.urls import reverse
+from phonenumber_field.modelfields import PhoneNumberField
+
+
+class User(AbstractUser):
+    first_name = models.CharField("Имя", max_length=100, null=True)
+    last_name = models.CharField(
+        "Фамилия",
+        max_length=100,
+        null=True,
+    )
+    parent_name = models.CharField(
+        "Отчество",
+        max_length=100,
+        null=True,
+    )
+    email = models.EmailField(
+        unique=True,
+        max_length=250,
+        verbose_name='почта'
+    )
+    phone = PhoneNumberField(
+        verbose_name='телефон',
+        null=True,
+    )
+
+    organization = models.CharField(
+        "Организация",
+        max_length=100,
+        null=True,
+    )
+    inn = models.IntegerField(
+        "ИНН",
+        max_length=12,
+        null=True,
+    )
+
+    kpp = models.IntegerField(
+        "КПП",
+        max_length=9,
+        null=True,
+    )
+    class Meta:
+        verbose_name = "Пользователь"
+        verbose_name_plural = "Пользователи"
+
+    def __str__(self):
+        return "{} {}".format(self.first_name, self.last_name)
