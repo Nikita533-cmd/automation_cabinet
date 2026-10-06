@@ -107,6 +107,7 @@ class VRY():
         for e in self.outs:
             a = Automat.objects.filter(i__gte=e['i']).order_by('i').first()
             B_down = B_down + a.B
+        print("HERE", B_down)
         self.scaf = Cabinet.objects.filter(B_panel__gte=B_down).order_by('mass').first()
         
 

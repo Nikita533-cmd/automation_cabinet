@@ -115,7 +115,6 @@ function eventlistener_outlet(i){
     }
 
 }
-
 // Функция для создания HTML контента отводящих элементов
 function create_outlet(i) {
     let create_outlet = '';
@@ -151,23 +150,24 @@ function create_outlet(i) {
                 </td>
                 <td style="text-align: left;">В</td>
                 <td style="text-align: right;">
-                    <input type="number" class="form-control" id="power_outlet_${j}" name="power_outlet_${j}" required min="1" max="95" 
-                    step="0.01" oninput="if(parseFloat(this.value) > 95) this.value = 95;">
+                    <input type="number" class="form-control" id="power_outlet_${j}" name="power_outlet_${j}" required min="1" max="800" 
+                    step="0.01" oninput="if(parseFloat(this.value) > 800) this.value = 800;">
                 </td>
                 <td style="text-align: left;">А</td>
                 <td style="text-align: right;">
-                    <input type="number" class="form-control" id="power__outlet_kvt_${j}" name="power__outlet_kvt_${j}" min="0.22" max="36.10" 
+                    <input type="number" class="form-control" id="power__outlet_kvt_${j}" name="power__outlet_kvt_${j}"  
                     step="0.01" oninput="const voltage = document.getElementById('voltage_outlet_${j}');
-                            if (voltage) {
-                                const voltage_value = parseFloat(voltage.value);
-                                const value = parseFloat(this.value);                                                                
-                                if (voltage_value === 220 && value > 20.90) {
-                                    this.value = '20.90';
-                                }                                 
-                                else if (value > 36.10) {
-                                    this.value = '36.10';
-                                }
-                            }">
+                            // if (voltage) {
+                            //     const voltage_value = parseFloat(voltage.value);
+                            //     const value = parseFloat(this.value);                                                                
+                            //     if (voltage_value === 220 && value > 20.90) {
+                            //         this.value = '20.90';
+                            //     }                                 
+                            //     else if (value > 36.10) {
+                            //         this.value = '36.10';
+                            //     }
+                            // }
+                                ">
                 </td>
                 <td id="recalculation" style="text-align: left;">кВт</td>
             </tr>                    

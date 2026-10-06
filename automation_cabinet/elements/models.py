@@ -43,7 +43,7 @@ class Automat(models.Model):
     B = models.FloatField('Ширина')
     C = models.FloatField('Глубина')
     i = models.FloatField('Сила тока')
-    # Phase = models.IntegerField('Количество фаз')
+    Phase = models.IntegerField('Количество фаз')
     mass = models.FloatField('Масса, кг')
     Path = models.TextField('Путь к файлу')
     price = models.FloatField('Цена, руб')    
